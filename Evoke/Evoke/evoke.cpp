@@ -1,4 +1,6 @@
 #include "evoke.h"
+#include "parser.h"
+#include "ASTPrinter.h"
 
 bool Evoke::hadError = false;
 
@@ -22,12 +24,15 @@ void Evoke::error(Token token, std::string message)
 
 void Evoke::runFile(const std::string& path)
 {
-	std::ifstream myFile(path); //	open file
+	//	open file
+	std::ifstream myFile(path);
 	if (!myFile.is_open())
 		std::cout << "Error opening file" << std::endl;
 
-	std::stringstream buffer;	//	convert to string stream
-	buffer << myFile.rdbuf();	//	read string stream into string
+	//	convert to string stream
+	std::stringstream buffer;
+	//	read string stream into string
+	buffer << myFile.rdbuf();
 
 	myFile.close();
 
@@ -42,11 +47,14 @@ void Evoke::runPrompt()
 
 	while (true)
 	{
-		std::cin >> line;	//	get input from user
+		//	get input from user
+		std::cin >> line;
 		if (line == "")
 			break;	//	quit if no input
-		run(line);	//	run input
-		hadError = false; //	reset hadError so that syntax errors don't kill the session
+		//	run input
+		run(line);
+		//	reset hadError so that syntax errors don't kill the session
+		hadError = false;
 	}
 }
 
@@ -54,7 +62,16 @@ void Evoke::run(std::string source)
 {
 	Scanner scanner(source);
 	std::vector<Token> tokens = scanner.scanTokens();
-	scanner.printResult();
+
+	Parser parser(tokens);
+	std::unique_ptr<Expr> ast = parser.parse();
+
+	if (ast)
+	{
+		ASTPrinter printer;
+		std::cout << printer.print(*ast) << std::endl;
+	}
+
 }
 
 void Evoke::report(int line, std::string location, std::string& message)

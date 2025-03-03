@@ -68,6 +68,12 @@ void Scanner::scanToken()
 		else
 			addToken(GREATER, ByteLiteral());
 		break;
+	case '&':
+		addToken(match('&') ? AND_AND : AND, ByteLiteral());
+		break;
+	case '|':
+		addToken(match('|') ? PIPE_PIPE : PIPE, ByteLiteral());
+		break;
 	case '?':
 		addToken(match('?') ? QUESTION_QUESTION : QUESTION, ByteLiteral());
 		break;
@@ -188,7 +194,6 @@ void Scanner::handleDigit()
 	addToken(BYTE_LITERAL, ByteLiteral(numAsByte));
 }
 
-
 byte Scanner::binaryStringToByte(const std::string& binaryString)
 {
 	if (binaryString.length() != 8) {
@@ -197,9 +202,6 @@ byte Scanner::binaryStringToByte(const std::string& binaryString)
 	}
 	return static_cast<byte>(std::bitset<8>(binaryString).to_ulong());
 }
-
-
-
 
 void Scanner::identifier()
 {

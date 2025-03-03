@@ -10,11 +10,13 @@ const std::unordered_map<TokenType, std::string> Token::enumStrings = {
 	{EQUAL, "EQUAL"}, {EQUAL_EQUAL, "EQUAL_EQUAL"},
 	{GREATER, "GREATER"}, {GREATER_EQUAL, "GREATER_EQUAL"}, {GREATER_GREATER, "GREATER_GREATER"},
 	{LESS, "LESS"}, {LESS_EQUAL, "LESS_EQUAL"}, {LESS_LESS, "LESS_LESS"},
+	{AND, "AND"}, {AND_AND, "AND_AND"},
+	{PIPE, "PIPE"}, {PIPE_PIPE, "PIPE_PIPE"},
 	{QUESTION, "QUESTION"}, {QUESTION_QUESTION, "QUESTION_QUESTION"},
-
 	{IDENTIFIER, "IDENTIFIER"}, {BYTE_LITERAL, "BYTE"},
 	{EVOKE, "EVOKE"}, {CLEAR, "CLEAR"},
-	{END_OF_FILE, "END_OF_FILE"}
+	{END_OF_FILE, "END_OF_FILE"},
+	{NONE, "NONE"}
 };
 
 Token::Token(TokenType type, const std::string& lexeme, ByteLiteral literal, int line)
