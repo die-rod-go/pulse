@@ -68,6 +68,12 @@ void Scanner::scanToken()
 		else
 			addToken(GREATER, ByteLiteral());
 		break;
+	case '&':
+		addToken(match('&') ? AND_AND : AND, ByteLiteral());
+		break;
+	case '|':
+		addToken(match('|') ? PIPE_PIPE : PIPE, ByteLiteral());
+		break;
 	case '?':
 		addToken(match('?') ? QUESTION_QUESTION : QUESTION, ByteLiteral());
 		break;

@@ -15,6 +15,8 @@ enum TokenType {
 	EQUAL, EQUAL_EQUAL, // = ==
 	GREATER, GREATER_EQUAL, GREATER_GREATER, // > >= >>
 	LESS, LESS_EQUAL, LESS_LESS, // < <= <<
+	AND, AND_AND,
+	PIPE, PIPE_PIPE,
 	QUESTION, QUESTION_QUESTION, // ? ??
 
 	// Literals.
