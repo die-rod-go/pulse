@@ -32,6 +32,7 @@ private:
 	char peek();
 	char peekNext();
 
+	void handleDigit();
 	void byteLiteral();
 	byte binaryStringToByte(const std::string& binaryString);
 	void identifier();

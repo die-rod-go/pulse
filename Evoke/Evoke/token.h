@@ -13,8 +13,8 @@ enum TokenType {
 	// One or two character tokens.
 	BANG, BANG_EQUAL, // ! !=
 	EQUAL, EQUAL_EQUAL, // = ==
-	GREATER, GREATER_EQUAL, // > >=
-	LESS, LESS_EQUAL, // < <=
+	GREATER, GREATER_EQUAL, GREATER_GREATER, // > >= >>
+	LESS, LESS_EQUAL, LESS_LESS, // < <= <<
 	QUESTION, QUESTION_QUESTION, // ? ??
 
 	// Literals.
@@ -44,7 +44,7 @@ public:
 
 	Token(TokenType type, const std::string& lexeme, ByteLiteral literal, int line);
 	std::string toString() const;
+	static const std::unordered_map<TokenType, std::string> enumStrings;
 
 private:
-	static const std::unordered_map<TokenType, std::string> enumStrings;
 };

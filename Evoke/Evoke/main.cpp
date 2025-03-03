@@ -5,11 +5,10 @@
 int main(int argc, const char* argv[])
 {
 	Evoke evoke;
-	//std::cout << argc << std::endl;
 
 	if (argc == 1) {
-		std::cout << "Usage: cproxi [script]\n";
-		return EXIT_FAILURE; // Exit after showing usage
+		std::cout << "Usage: evoke [script]\n";
+		return EXIT_FAILURE;
 	}
 
 	if (argc == 2) {

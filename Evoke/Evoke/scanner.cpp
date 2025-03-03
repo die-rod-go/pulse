@@ -8,7 +8,6 @@ const std::unordered_map<std::string, TokenType> Scanner::keywords = {
 
 Scanner::Scanner(std::string source) : source(source), start(0), current(0), line(1), currentOnLine(0) {}
 
-
 std::vector<Token> Scanner::scanTokens()
 {
 	while (!isAtEnd())
@@ -54,13 +53,23 @@ void Scanner::scanToken()
 		addToken(match('=') ? EQUAL_EQUAL : EQUAL, ByteLiteral());
 		break;
 	case '<':
-		addToken(match('=') ? LESS_EQUAL : LESS, ByteLiteral());
+		if (match('='))
+			addToken(LESS_EQUAL, ByteLiteral());
+		else if (match('<'))
+			addToken(LESS_LESS, ByteLiteral());
+		else
+			addToken(LESS, ByteLiteral());
 		break;
 	case '>':
-		addToken(match('=') ? GREATER_EQUAL : GREATER, ByteLiteral());
+		if (match('='))
+			addToken(GREATER_EQUAL, ByteLiteral());
+		else if (match('>>'))
+			addToken(GREATER_GREATER, ByteLiteral());
+		else
+			addToken(GREATER, ByteLiteral());
 		break;
 	case '?':
-		addToken(match('?') ? QUESTION : QUESTION_QUESTION, ByteLiteral());
+		addToken(match('?') ? QUESTION_QUESTION : QUESTION, ByteLiteral());
 		break;
 
 		//	checks for comments "//" and consumes the whole line
@@ -85,14 +94,20 @@ void Scanner::scanToken()
 		line++;
 		currentOnLine = 1;
 		break;
+	case '0':
+		if (match('b'))
+		{
+			byteLiteral();
+		}
+		break;
 
 	default:
-		if (c == '0' || c == '1')
-			byteLiteral();
+		if (isdigit(c))
+			handleDigit();
 		else if (isalpha(c) || c == '_')
 			identifier();
 		else
-			Evoke::error(line, "Unexpected character: '" + std::string(1, c) + "'");
+			Evoke::error(line, "Unexpected character: '" + std::string(1, c) + "'" + "at: " + std::to_string(currentOnLine));
 	}
 }
 
@@ -109,7 +124,8 @@ void Scanner::addToken(TokenType type, ByteLiteral literal)
 	tokens.push_back(Token(type, text, literal, line));
 }
 
-bool Scanner::match(char expected)	//	checks if two characters are equal - conditional advance
+//	checks if two characters are equal - conditional advance
+bool Scanner::match(char expected)
 {
 	if (isAtEnd())
 		return false;
@@ -137,33 +153,53 @@ char Scanner::peekNext()
 
 void Scanner::byteLiteral()
 {
-	bool isValidByte = false;
+	//	skip the 0b. only used to calculate the literal value, not the lexeme
+	int bitStart = start + 2;
 
+	//	could replace with "while (match('0') || match('1')) {}" but this felt less smelly
 	while (peek() == '0' || peek() == '1')
 		advance();
 
-	int length = getLength(start, current);
+	int bitLength = getLength(bitStart, current);
 
-	//	if it's not a valid byte
-	if (length != 8)
-	{
-		Evoke::error(line, "Invalid byte literal - expected 8 bits.");
+	//	if the bit length is not exactly 8, report an error
+	if (bitLength != 8) {
+		Evoke::error(line, "Invalid byte literal. Expected 8 bits, got: " + std::to_string(bitLength));
 		return;
 	}
 
-	byte literal = binaryStringToByte(source.substr(start, length));
+	//	extract only the 8-bit sequence (excluding "0b")
+	std::string bitString = source.substr(bitStart, bitLength);
+
+	//	convert and add the byte literal
+	byte literal = binaryStringToByte(bitString);
 	addToken(BYTE_LITERAL, ByteLiteral(literal));
 }
 
+void Scanner::handleDigit()
+{
+	while (isdigit(peek()))
+		advance();
+	int numLength = getLength(start, current);
+
+	//	extract num as string
+	std::string numString = source.substr(start, numLength);
+	byte numAsByte = std::stoi(numString);
+	addToken(BYTE_LITERAL, ByteLiteral(numAsByte));
+}
+
+
 byte Scanner::binaryStringToByte(const std::string& binaryString)
 {
-	//	this should never be true but I'll check it just in case
 	if (binaryString.length() != 8) {
-		Evoke::error(line, "Invalid byte literal - expected 8 bits");
+		Evoke::error(line, "Invalid byte literal. Expected 8 bits, got: " + std::to_string(binaryString.length()));
+		return 0;
 	}
-	//	cast and convert to byte
 	return static_cast<byte>(std::bitset<8>(binaryString).to_ulong());
 }
+
+
+
 
 void Scanner::identifier()
 {
@@ -174,7 +210,8 @@ void Scanner::identifier()
 	TokenType type;
 	std::string text = source.substr(start, length);
 
-	if (keywords.find(text) != keywords.end()) //	if keyword is in map/exists in the language
+	//	if keyword is in map/exists in the language
+	if (keywords.find(text) != keywords.end())
 		type = keywords.at(text);
 	else
 		type = IDENTIFIER;
@@ -199,8 +236,7 @@ void Scanner::printResult()
 {
 	for (auto token : tokens)
 	{
-		std::cout << "====" << std::endl;
+		std::cout << "==[" + Token::enumStrings.at(token.type) + "]==" << std::endl;
 		std::cout << token.lexeme << std::endl;
-		std::cout << token.type << std::endl;
 	}
 }
