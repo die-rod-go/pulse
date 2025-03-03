@@ -23,7 +23,9 @@ enum TokenType {
 	// Keywords.
 	EVOKE, CLEAR,
 
-	END_OF_FILE
+	END_OF_FILE,
+
+	NONE
 };
 
 class ByteLiteral {

@@ -14,7 +14,8 @@ const std::unordered_map<TokenType, std::string> Token::enumStrings = {
 
 	{IDENTIFIER, "IDENTIFIER"}, {BYTE_LITERAL, "BYTE"},
 	{EVOKE, "EVOKE"}, {CLEAR, "CLEAR"},
-	{END_OF_FILE, "END_OF_FILE"}
+	{END_OF_FILE, "END_OF_FILE"},
+	{NONE, "NONE"}
 };
 
 Token::Token(TokenType type, const std::string& lexeme, ByteLiteral literal, int line)

@@ -1,0 +1,46 @@
+program       ::= statement* ;
+
+statement     ::= variable_declaration
+                | expression_statement
+                | evoke_statement
+                | conditional_evoke
+                | include_statement ;
+
+variable_declaration ::= identifier "=" expression ":" event_identifier ";" ;
+
+expression_statement ::= expression ":" event_identifier ";" ;
+
+evoke_statement  ::= "evoke" event_identifier ";" ;
+
+conditional_evoke ::= "evoke" event_identifier ("?" | "??") expression ";" ;
+
+include_statement ::= "#include" string_literal ";" ;
+
+expression     ::= assignment ;
+
+assignment     ::= identifier "=" expression
+                | binary ;
+
+binary ::= unary (("+" | "-" | "*" | "/" | "<<" | ">>" | ">" | ">=" | "<" | "<=" | "==" | "!=") unary)* ;
+
+unary          ::= ("-" | "!") unary
+                | primary ;
+
+primary        ::= identifier
+                | number
+                | byte_literal
+                | "(" expression ")" ;
+
+event_identifier ::= identifier ;
+
+identifier     ::= letter (letter | digit | "_")* ;
+
+number         ::= digit+ ;
+
+byte_literal   ::= "0b" ("0" | "1"){8} ;   // Must be exactly 8 bits
+
+string_literal ::= '"' character* '"' ;
+
+letter         ::= "a"–"z" | "A"–"Z" ;
+digit          ::= "0"–"9" ;
+character      ::= any valid character except `"` ;
