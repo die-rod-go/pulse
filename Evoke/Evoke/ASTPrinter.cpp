@@ -1,7 +1,7 @@
 #include "ASTPrinter.h"
 
 std::string ASTPrinter::print(const Expr& expr) {
-	result.str("");  // Clear any previous result
+	result.str("");
 	result.clear();
 	expr.accept(*this);
 	return result.str();
@@ -22,7 +22,7 @@ void ASTPrinter::visit(const BinaryExpr& expr) const {
 }
 
 void ASTPrinter::visit(const LiteralExpr& expr) const {
-	result << expr.literal.lexeme; // Assuming ByteLiteral has a toString() method
+	result << expr.literal.lexeme;
 }
 
 void ASTPrinter::visit(const VariableExpr& expr) const {

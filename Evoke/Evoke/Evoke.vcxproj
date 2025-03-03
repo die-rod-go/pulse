@@ -130,6 +130,7 @@
     <ClCompile Include="ASTPrinter.cpp" />
     <ClCompile Include="evoke.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parser.cpp" />
     <ClCompile Include="scanner.cpp" />
     <ClCompile Include="token.cpp" />
   </ItemGroup>
@@ -137,6 +138,7 @@
     <ClInclude Include="ASTPrinter.h" />
     <ClInclude Include="evoke.h" />
     <ClInclude Include="expr.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="scanner.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="types.h" />

@@ -194,7 +194,6 @@ void Scanner::handleDigit()
 	addToken(BYTE_LITERAL, ByteLiteral(numAsByte));
 }
 
-
 byte Scanner::binaryStringToByte(const std::string& binaryString)
 {
 	if (binaryString.length() != 8) {
@@ -203,9 +202,6 @@ byte Scanner::binaryStringToByte(const std::string& binaryString)
 	}
 	return static_cast<byte>(std::bitset<8>(binaryString).to_ulong());
 }
-
-
-
 
 void Scanner::identifier()
 {
