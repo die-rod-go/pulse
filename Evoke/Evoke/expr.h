@@ -6,6 +6,8 @@ class ExprVisitor {
 public:
 	virtual void visit(const class UnaryExpr& expr) const = 0;
 	virtual void visit(const class BinaryExpr& expr) const = 0;
+	virtual void visit(const class GroupingExpr& expr) const = 0;
+
 	virtual void visit(const class LiteralExpr& expr) const = 0;
 	virtual void visit(const class VariableExpr& expr) const = 0;
 	virtual void visit(const class AssignmentExpr& expr) const = 0;
@@ -44,7 +46,21 @@ public:
 	BinaryExpr(std::unique_ptr<Expr> left, Token op, std::unique_ptr<Expr> right)
 		: left(std::move(left)), op(op), right(std::move(right)) {}
 
-	void accept(const ExprVisitor& visitor) const override {
+	void accept(const ExprVisitor& visitor) const override
+	{
+		visitor.visit(*this);
+	}
+};
+
+class GroupingExpr : public Expr
+{
+public:
+	std::unique_ptr<Expr> expr;
+
+	GroupingExpr(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
+
+	void accept(const ExprVisitor& visitor) const override
+	{
 		visitor.visit(*this);
 	}
 };

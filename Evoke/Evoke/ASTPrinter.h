@@ -9,6 +9,8 @@ public:
 
 	void visit(const UnaryExpr& expr) const override;
 	void visit(const BinaryExpr& expr) const override;
+	void visit(const GroupingExpr& expr) const override;
+
 	void visit(const LiteralExpr& expr) const override;
 	void visit(const VariableExpr& expr) const override;
 	void visit(const AssignmentExpr& expr) const override;

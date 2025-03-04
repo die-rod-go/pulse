@@ -138,6 +138,7 @@
     <ClInclude Include="ASTPrinter.h" />
     <ClInclude Include="evoke.h" />
     <ClInclude Include="expr.h" />
+    <ClInclude Include="interpreter.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="scanner.h" />
     <ClInclude Include="token.h" />

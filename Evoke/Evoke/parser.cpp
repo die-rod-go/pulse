@@ -155,7 +155,7 @@ std::unique_ptr<Expr> Parser::primary()
 	{
 		auto expr = expression();
 		consume(RIGHT_PAREN, "Expected ')' after expression");
-		return expr;
+		return std::make_unique<GroupingExpr>(std::move(expr));
 	}
 
 	throw ParseError(peek(), "Expected expression");

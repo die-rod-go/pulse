@@ -28,7 +28,7 @@ private:
 	void scanToken();
 	char advance();
 	void addToken(TokenType type, ByteLiteral literal);
-	bool match(char expected);	//	checks if two characters are equal, advances if tey are
+	bool match(char expected);	//	checks if two characters are equal, advances if they are
 	char peek();
 	char peekNext();
 
