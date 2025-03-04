@@ -8,9 +8,8 @@ std::unique_ptr<Expr> Parser::parse()
 	try {
 		return expression();
 	}
-	catch (...)
+	catch (ParseError error)
 	{
-		std::cout << "Error while parsing" << std::endl;
 		synchronize();
 		return nullptr;
 	}
@@ -60,7 +59,7 @@ bool Parser::match(std::initializer_list<TokenType> types)
 Token Parser::consume(TokenType type, std::string message)
 {
 	if (check(type)) return advance();
-	Evoke::error(peek(), message);
+	throw ParseError(peek(), message);
 	return peek();
 }
 
@@ -149,8 +148,8 @@ std::unique_ptr<Expr> Parser::primary()
 	if (match({ BYTE_LITERAL }))
 		return std::make_unique<LiteralExpr>(previous());
 
-	if (match({ IDENTIFIER }))
-		return std::make_unique<VariableExpr>(previous());
+	/*if (match({ IDENTIFIER }))
+		return std::make_unique<VariableExpr>(previous());*/
 
 	if (match({ LEFT_PAREN }))
 	{
@@ -159,7 +158,7 @@ std::unique_ptr<Expr> Parser::primary()
 		return expr;
 	}
 
-	Evoke::error(peek(), "Expected expression");
+	throw ParseError(peek(), "Expected expression");
 	return nullptr;
 }
 

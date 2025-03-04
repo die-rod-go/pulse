@@ -1,8 +1,21 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <exception>
 #include "token.h"
 #include "expr.h"
+#include "evoke.h"
+
+class ParseError : public std::exception {
+public:
+	ParseError(Token token, std::string message)
+	{
+		Evoke::error(token, message);
+	}
+	const char* what() const noexcept override {
+		return "An error occurred while parsing!";
+	}
+};
 
 class Parser
 {

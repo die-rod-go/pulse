@@ -66,6 +66,8 @@ void Evoke::run(std::string source)
 	Parser parser(tokens);
 	std::unique_ptr<Expr> ast = parser.parse();
 
+	if (hadError) return;
+
 	if (ast)
 	{
 		ASTPrinter printer;
