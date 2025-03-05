@@ -3,16 +3,20 @@
 
 Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)), current(0) {}
 
-std::unique_ptr<Expr> Parser::parse()
+std::vector<std::unique_ptr<Stmt>> Parser::parse()
 {
+	std::vector<std::unique_ptr<Stmt>> statements;
 	try {
-		return expression();
+		while (!isAtEnd())
+		{
+			statements.push_back(statement());
+		}
 	}
-	catch (ParseError error)
+	catch (ParseError& error)
 	{
-		synchronize();
-		return nullptr;
+		Evoke::error(error.token, error.message);
 	}
+	return statements;
 }
 
 bool Parser::isAtEnd()
@@ -40,6 +44,27 @@ bool Parser::check(TokenType type)
 {
 	if (isAtEnd()) return false;
 	return peek().type == type;
+}
+
+std::unique_ptr<Stmt> Parser::statement()
+{
+	if (match({ PRINT } )) return printStatement();
+
+	return expressionStatement();
+}
+
+std::unique_ptr<Stmt> Parser::printStatement()
+{
+	std::unique_ptr<Expr> value = expression();
+	consume(SEMICOLON, "Expect ';' after value.");
+	return std::make_unique<PrintStmt>(std::move(value));
+}
+
+std::unique_ptr<Stmt> Parser::expressionStatement()
+{
+	std::unique_ptr<Expr> expr = expression();
+	consume(SEMICOLON, "Expect ';' after expression.");
+	return std::make_unique<ExpressionStmt>(std::move(expr));
 }
 
 bool Parser::match(std::initializer_list<TokenType> types)

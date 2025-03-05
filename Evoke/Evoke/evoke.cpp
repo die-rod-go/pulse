@@ -75,16 +75,11 @@ void Evoke::run(std::string source)
 	std::vector<Token> tokens = scanner.scanTokens();
 
 	Parser parser(tokens);
-	std::unique_ptr<Expr> ast = parser.parse();
+	std::vector<std::unique_ptr<Stmt>> statements = parser.parse();
 
 	if (hadError) return;
 
-	if (ast)
-	{
-		ASTPrinter printer;
-		std::cout << printer.print(*ast) << std::endl;
-		interpreter.interpret(*ast);
-	}
+	interpreter.interpret(statements);
 
 }
 

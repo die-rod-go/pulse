@@ -4,7 +4,8 @@
 const std::unordered_map<std::string, TokenType> Scanner::keywords = {
 	{"evoke", EVOKE},
 	{"clear", CLEAR},
-	{"byte", BYTE}
+	{"byte", BYTE},
+	{"print", PRINT}
 };
 
 Scanner::Scanner(std::string source) : source(source), start(0), current(0), line(1), currentOnLine(0) {}
@@ -105,8 +106,8 @@ void Scanner::scanToken()
 		if (match('b'))
 		{
 			byteLiteral();
+			break;
 		}
-		break;
 
 	default:
 		if (isdigit(c))

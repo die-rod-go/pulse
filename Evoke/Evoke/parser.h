@@ -5,6 +5,7 @@
 #include "token.h"
 #include "expr.h"
 #include "evoke.h"
+#include "stmt.h"
 
 class ParseError : public std::exception {
 public:
@@ -12,10 +13,7 @@ public:
 	Token token;
 	std::string message;
 
-	ParseError(Token token, std::string message) : token(token), message(message)
-	{
-		Evoke::error(token, message);
-	}
+	ParseError(Token token, std::string message) : token(token), message(message) {}
 	const char* what() const noexcept override {
 		return "An error occurred while parsing!";
 	}
@@ -24,8 +22,8 @@ public:
 class Parser
 {
 public:
+	std::vector<std::unique_ptr<Stmt>> parse();
 	explicit Parser(std::vector<Token> tokens);
-	std::unique_ptr<Expr> parse();
 private:
 	const std::vector<Token> tokens;
 	int current = 0;
@@ -36,6 +34,10 @@ private:
 	Token previous();
 	bool match(std::initializer_list<TokenType> types);
 	bool check(TokenType type);
+
+	std::unique_ptr<Stmt> statement();
+	std::unique_ptr<Stmt> printStatement();
+	std::unique_ptr<Stmt> expressionStatement();
 
 	Token consume(TokenType type, std::string message);
 	void synchronize();

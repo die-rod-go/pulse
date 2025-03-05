@@ -1,17 +1,23 @@
 #include "interpreter.h"
 #include "evoke.h"
 
-void Interpreter::interpret(const Expr& expr) const
+void Interpreter::interpret(std::vector<std::unique_ptr<Stmt>>& statements) const
 {
 	try {
-		evaluate(expr);
-		byte value = currentResult;
-		std::cout << static_cast<int>(value)<< std::endl;
+		for (const auto& statement : statements)
+		{
+			execute(*statement);
+		}
 	}
-	catch (RuntimeError error)
+	catch (RuntimeError& error)
 	{
 		Evoke::runtimeError(error.token, error.message);
 	}
+}
+
+void Interpreter::execute(const Stmt& stmt) const
+{
+	stmt.accept(*this);
 }
 
 void Interpreter::visit(const UnaryExpr& expr) const
@@ -41,6 +47,8 @@ void Interpreter::visit(const BinaryExpr& expr) const
 		currentResult = left - right;
 		break;
 	case SLASH:
+		if (right == 0)
+			throw RuntimeError(expr.op, "Division by zero.");
 		currentResult = left / right;
 		break;
 	case STAR:
@@ -84,4 +92,16 @@ void Interpreter::visit(const GroupingExpr& expr) const
 void Interpreter::evaluate(const Expr& expr) const
 {
 	expr.accept(*this);
+}
+
+void Interpreter::visit(const ExpressionStmt& stmt) const 
+{
+	evaluate(*stmt.expr);
+}
+
+void Interpreter::visit(const PrintStmt& stmt) const 
+{
+	evaluate(*stmt.expr);
+	byte value = currentResult;
+	std::cout << (int)value << std::endl;
 }

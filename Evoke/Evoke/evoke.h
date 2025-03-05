@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
-#include "Token.h"
+#include "token.h"
 #include "Scanner.h"
 #include "interpreter.h"
 
