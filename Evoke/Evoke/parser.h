@@ -8,7 +8,11 @@
 
 class ParseError : public std::exception {
 public:
-	ParseError(Token token, std::string message)
+
+	Token token;
+	std::string message;
+
+	ParseError(Token token, std::string message) : token(token), message(message)
 	{
 		Evoke::error(token, message);
 	}

@@ -23,7 +23,7 @@ enum TokenType {
 	IDENTIFIER, BYTE_LITERAL,
 
 	// Keywords.
-	EVOKE, CLEAR,
+	EVOKE, CLEAR, BYTE,
 
 	END_OF_FILE,
 

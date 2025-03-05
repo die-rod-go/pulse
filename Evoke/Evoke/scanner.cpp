@@ -3,7 +3,8 @@
 
 const std::unordered_map<std::string, TokenType> Scanner::keywords = {
 	{"evoke", EVOKE},
-	{"clear", CLEAR}
+	{"clear", CLEAR},
+	{"byte", BYTE}
 };
 
 Scanner::Scanner(std::string source) : source(source), start(0), current(0), line(1), currentOnLine(0) {}
