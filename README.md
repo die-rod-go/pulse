@@ -13,6 +13,7 @@ emit init;
 
 //  a new statement is created and subscribes to the add event
 byte sum = num1 + num2 : add;
+
 //  the add event is called and the two numbers are added together
 emit add;
 ```
