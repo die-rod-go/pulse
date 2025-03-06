@@ -14,10 +14,16 @@ void ASTPrinter::visit(const UnaryExpr& expr) const {
 }
 
 void ASTPrinter::visit(const BinaryExpr& expr) const {
-	result << "(";
+	result << "( " << expr.op.lexeme << " ";
 	expr.left->accept(*this);
-	result << " " << expr.op.lexeme << " ";
+	result << " ";
 	expr.right->accept(*this);
+	result << ")";
+}
+
+void ASTPrinter::visit(const GroupingExpr& expr) const {
+	result << "(group ";
+	expr.expr->accept(*this);
 	result << ")";
 }
 

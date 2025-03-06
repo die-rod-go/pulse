@@ -3,16 +3,20 @@
 
 Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)), current(0) {}
 
-std::unique_ptr<Expr> Parser::parse()
+std::vector<std::unique_ptr<Stmt>> Parser::parse()
 {
+	std::vector<std::unique_ptr<Stmt>> statements;
 	try {
-		return expression();
+		while (!isAtEnd())
+		{
+			statements.push_back(declaration());
+		}
 	}
-	catch (ParseError error)
+	catch (ParseError& error)
 	{
-		synchronize();
-		return nullptr;
+		Evoke::error(error.token, error.message);
 	}
+	return statements;
 }
 
 bool Parser::isAtEnd()
@@ -42,6 +46,56 @@ bool Parser::check(TokenType type)
 	return peek().type == type;
 }
 
+std::unique_ptr<Stmt> Parser::declaration()
+{
+	try {
+		if (match({ BYTE })) return varDeclaration();
+		return statement();
+	}
+	catch (ParseError error)
+	{
+		Evoke::error(error.token, error.message);
+		synchronize();
+		return nullptr;
+	}
+}
+
+std::unique_ptr<Stmt> Parser::varDeclaration()
+{
+	Token name = consume(IDENTIFIER, "Expect variable name.");
+
+	std::unique_ptr<Expr> initializer = nullptr;
+	if (match({ EQUAL }))
+	{
+		initializer = expression();
+	}
+
+	consume(SEMICOLON, "Expect ';' after variable declaration");
+
+	return std::make_unique<ByteStmt>(name, std::move(initializer));
+}
+
+std::unique_ptr<Stmt> Parser::statement()
+{
+	if (match({ PRINT } )) return printStatement();
+
+	return expressionStatement();
+}
+
+std::unique_ptr<Stmt> Parser::printStatement()
+{
+	std::unique_ptr<Expr> value = expression();
+	consume(SEMICOLON, "Expect ';' after value.");
+	return std::make_unique<PrintStmt>(std::move(value));
+}
+
+std::unique_ptr<Stmt> Parser::expressionStatement()
+{
+	std::unique_ptr<Expr> expr = expression();
+	consume(SEMICOLON, "Expect ';' after expression.");
+	return std::make_unique<ExpressionStmt>(std::move(expr));
+}
+
 bool Parser::match(std::initializer_list<TokenType> types)
 {
 	for (auto type : types)
@@ -63,10 +117,31 @@ Token Parser::consume(TokenType type, std::string message)
 	return peek();
 }
 
-//	expression -> equality
+//	expression -> assignment
 std::unique_ptr<Expr> Parser::expression()
 {
-	return equality();
+	return assignment();
+}
+
+std::unique_ptr<Expr> Parser::assignment()
+{
+	std::unique_ptr<Expr> expr = equality();
+
+	if (match({ EQUAL }))
+	{
+		Token equals = previous();
+		std::unique_ptr<Expr> value = assignment();
+
+		//	instanceof (dirty idc)
+		if (VariableExpr* v = dynamic_cast<VariableExpr*>(expr.get()))
+		{
+			Token name = v->name;
+			return std::make_unique<AssignmentExpr>(name, std::move(value));
+		}
+
+		Evoke::error(equals, "Invalid assignment target.");
+	}
+	return expr;
 }
 
 //	equality -> comparison ( ( "!=" | "==" ) comparison )
@@ -148,21 +223,21 @@ std::unique_ptr<Expr> Parser::primary()
 	if (match({ BYTE_LITERAL }))
 		return std::make_unique<LiteralExpr>(previous());
 
-	/*if (match({ IDENTIFIER }))
-		return std::make_unique<VariableExpr>(previous());*/
+	if (match({ IDENTIFIER }))
+		return std::make_unique<VariableExpr>(previous());
 
 	if (match({ LEFT_PAREN }))
 	{
 		auto expr = expression();
 		consume(RIGHT_PAREN, "Expected ')' after expression");
-		return expr;
+		return std::make_unique<GroupingExpr>(std::move(expr));
 	}
 
 	throw ParseError(peek(), "Expected expression");
 	return nullptr;
 }
 
-//	syncronization for error recovery
+//	synchronization for error recovery
 void Parser::synchronize()
 {
 	advance();

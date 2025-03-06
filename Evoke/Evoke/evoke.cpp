@@ -3,6 +3,8 @@
 #include "ASTPrinter.h"
 
 bool Evoke::hadError = false;
+bool Evoke::hadRuntimeError = false;
+const Interpreter Evoke::interpreter = Interpreter();
 
 Evoke::Evoke()
 {
@@ -22,6 +24,12 @@ void Evoke::error(Token token, std::string message)
 		report(token.line, " at '" + token.lexeme + "'", message);
 }
 
+void Evoke::runtimeError(Token token, std::string message)
+{
+	hadRuntimeError = true;
+	std::cout << "[line " << token.line << "] Error: " << message << std::endl;
+}
+
 void Evoke::runFile(const std::string& path)
 {
 	//	open file
@@ -39,6 +47,8 @@ void Evoke::runFile(const std::string& path)
 	run(buffer.str());	//	run the file
 	if (hadError)
 		exit(EXIT_FAILURE);
+	if (hadRuntimeError)
+		exit(EXIT_FAILURE);
 }
 
 void Evoke::runPrompt()
@@ -55,6 +65,7 @@ void Evoke::runPrompt()
 		run(line);
 		//	reset hadError so that syntax errors don't kill the session
 		hadError = false;
+		hadRuntimeError = false;
 	}
 }
 
@@ -64,15 +75,11 @@ void Evoke::run(std::string source)
 	std::vector<Token> tokens = scanner.scanTokens();
 
 	Parser parser(tokens);
-	std::unique_ptr<Expr> ast = parser.parse();
+	std::vector<std::unique_ptr<Stmt>> statements = parser.parse();
 
 	if (hadError) return;
 
-	if (ast)
-	{
-		ASTPrinter printer;
-		std::cout << printer.print(*ast) << std::endl;
-	}
+	interpreter.interpret(statements);
 
 }
 

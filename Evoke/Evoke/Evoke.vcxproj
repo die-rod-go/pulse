@@ -128,7 +128,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ASTPrinter.cpp" />
+    <ClCompile Include="environment.cpp" />
     <ClCompile Include="evoke.cpp" />
+    <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="scanner.cpp" />
@@ -136,12 +138,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ASTPrinter.h" />
+    <ClInclude Include="environment.h" />
+    <ClInclude Include="errors.h" />
     <ClInclude Include="evoke.h" />
     <ClInclude Include="expr.h" />
+    <ClInclude Include="interpreter.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="scanner.h" />
+    <ClInclude Include="stmt.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="example.evo" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
