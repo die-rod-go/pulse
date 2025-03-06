@@ -94,6 +94,27 @@ output:
 ...
 ```
 
+# Print
+Does what it says on the tin.
+
+Usage:
+```
+print 1 : print_event;
+emit print_event;
+
+output:
+1
+```
+*Printing variables*
+```
+byte x = 5 : init;
+print x : init;
+emit init;
+
+output:
+5
+```
+
 # Event chaining
 Emit statements can also be subscribed to events. 
 ```
