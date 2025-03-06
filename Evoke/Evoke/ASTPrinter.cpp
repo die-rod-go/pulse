@@ -40,12 +40,3 @@ void ASTPrinter::visit(const AssignmentExpr& expr) const {
 	expr.value->accept(*this);
 	result << ")";
 }
-
-void ASTPrinter::visit(const EvokeExpr& expr) const {
-	result << "(evoke " << expr.eventName.lexeme << " " << expr.op.lexeme;
-	if (expr.condition) {
-		result << " ";
-		expr.condition->accept(*this);
-	}
-	result << ")";
-}

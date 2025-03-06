@@ -6,7 +6,7 @@ void Interpreter::interpret(std::vector<std::unique_ptr<Stmt>>& statements) cons
 	try {
 		for (const auto& statement : statements)
 		{
-			execute(*statement);
+			execute(*statement, false);
 		}
 	}
 	catch (RuntimeError& error)
@@ -15,9 +15,9 @@ void Interpreter::interpret(std::vector<std::unique_ptr<Stmt>>& statements) cons
 	}
 }
 
-void Interpreter::execute(const Stmt& stmt) const
+void Interpreter::execute(const Stmt& stmt, bool evoked) const
 {
-	stmt.accept(*this);
+	stmt.accept(*this, evoked);
 }
 
 void Interpreter::visit(const UnaryExpr& expr) const
@@ -102,31 +102,81 @@ void Interpreter::visit(const GroupingExpr& expr) const
 	currentResult = currentResult;
 }
 
+void Interpreter::visit(const ExpressionStmt& stmt, bool evoked) const
+{
+	if (evoked)
+		evaluate(*stmt.expr);
+	else {}
+}
+
+void Interpreter::visit(const PrintStmt& stmt, bool evoked) const
+{
+	if (evoked)
+	{
+		evaluate(*stmt.expr);
+		byte value = currentResult;
+		std::cout << (int)value << std::endl;
+	}
+	else {}
+	//environment.subscribe(stmt.associatedEvent.lexeme, std::make_unique<PrintStmt>(stmt));
+}
+
+void Interpreter::visit(const ByteStmt& stmt, bool evoked) const
+{
+	if (evoked)
+	{
+		byte value = NULL;
+		if (stmt.initializer != nullptr)
+		{
+			evaluate(*stmt.initializer);
+			value = currentResult;
+		}
+
+		environment.define(stmt.name.lexeme, value);
+	}
+	else {}
+	//environment.subscribe(stmt.associatedEvent.lexeme, std::make_unique<ByteStmt>(stmt));
+}
+
+void Interpreter::visit(const EvokeStmt& stmt, bool evoked) const
+{
+	if (stmt.condition != nullptr)
+	{
+		evaluate(*stmt.condition);
+		bool shouldTrigger = currentResult != 0;
+		if (shouldTrigger)
+		{
+			if (stmt.op.type == QUESTION)
+			{
+				triggerEvent(stmt.eventName.lexeme);
+			}
+			else if (stmt.op.type == QUESTION_QUESTION)
+			{
+				while (shouldTrigger)
+				{
+					triggerEvent(stmt.eventName.lexeme);
+					evaluate(*stmt.condition);
+					shouldTrigger = currentResult != 0;
+				}
+			}
+		}
+	}
+	else
+	{
+		triggerEvent(stmt.eventName.lexeme);
+	}
+}
+
 void Interpreter::evaluate(const Expr& expr) const
 {
 	expr.accept(*this);
 }
 
-void Interpreter::visit(const ExpressionStmt& stmt) const 
+void Interpreter::triggerEvent(const std::string& eventName) const
 {
-	evaluate(*stmt.expr);
-}
-
-void Interpreter::visit(const PrintStmt& stmt) const 
-{
-	evaluate(*stmt.expr);
-	byte value = currentResult;
-	std::cout << (int)value << std::endl;
-}
-
-void Interpreter::visit(const ByteStmt& stmt) const
-{
-	byte value = NULL;
-	if (stmt.initializer != nullptr)
+	const auto& statements = environment.getSubscribedStatements(eventName);
+	for (const auto& stmt : statements)
 	{
-		evaluate(*stmt.initializer);
-		value = currentResult;
+		execute(*stmt, true);
 	}
-
-	environment.define(stmt.name.lexeme, value);
 }

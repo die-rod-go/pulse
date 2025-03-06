@@ -11,7 +11,6 @@ public:
 	virtual void visit(const class LiteralExpr& expr) const = 0;
 	virtual void visit(const class VariableExpr& expr) const = 0;
 	virtual void visit(const class AssignmentExpr& expr) const = 0;
-	virtual void visit(const class EvokeExpr& expr) const = 0;
 };
 
 class Expr
@@ -96,21 +95,6 @@ public:
 	AssignmentExpr(Token name, std::unique_ptr<Expr> value)
 		: name(name), value(std::move(value)) {}
 
-	void accept(const ExprVisitor& visitor) const override
-	{
-		visitor.visit(*this);
-	}
-};
-
-class EvokeExpr : public Expr
-{
-public:
-	Token eventName;
-	Token op;
-	std::unique_ptr<Expr> condition;
-
-	explicit EvokeExpr(Token eventName, Token op, std::unique_ptr<Expr> condition)
-		: eventName(eventName), op(op), condition(std::move(condition)) {}
 	void accept(const ExprVisitor& visitor) const override
 	{
 		visitor.visit(*this);

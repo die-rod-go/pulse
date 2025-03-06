@@ -141,8 +141,8 @@
     <ClInclude Include="environment.h" />
     <ClInclude Include="errors.h" />
     <ClInclude Include="evoke.h" />
-    <ClInclude Include="expr.h" />
     <ClInclude Include="interpreter.h" />
+    <ClInclude Include="expr.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="scanner.h" />
     <ClInclude Include="stmt.h" />
