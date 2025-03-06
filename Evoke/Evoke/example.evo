@@ -1,4 +1,4 @@
-byte secretNumber = 127 : init;
+byte secretNumber = 33 : init;
 byte numGuesses = 0 : init;
 byte low = 0 : init;
 byte high = 255 : init;
