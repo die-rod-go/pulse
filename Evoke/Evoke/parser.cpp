@@ -117,10 +117,31 @@ Token Parser::consume(TokenType type, std::string message)
 	return peek();
 }
 
-//	expression -> equality
+//	expression -> assignment
 std::unique_ptr<Expr> Parser::expression()
 {
-	return equality();
+	return assignment();
+}
+
+std::unique_ptr<Expr> Parser::assignment()
+{
+	std::unique_ptr<Expr> expr = equality();
+
+	if (match({ EQUAL }))
+	{
+		Token equals = previous();
+		std::unique_ptr<Expr> value = assignment();
+
+		//	instanceof (dirty idc)
+		if (VariableExpr* v = dynamic_cast<VariableExpr*>(expr.get()))
+		{
+			Token name = v->name;
+			return std::make_unique<AssignmentExpr>(name, std::move(value));
+		}
+
+		Evoke::error(equals, "Invalid assignment target.");
+	}
+	return expr;
 }
 
 //	equality -> comparison ( ( "!=" | "==" ) comparison )
@@ -216,7 +237,7 @@ std::unique_ptr<Expr> Parser::primary()
 	return nullptr;
 }
 
-//	syncronization for error recovery
+//	synchronization for error recovery
 void Parser::synchronize()
 {
 	advance();

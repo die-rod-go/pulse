@@ -88,6 +88,14 @@ void Interpreter::visit(const VariableExpr& expr) const
 	currentResult = environment.get(expr.name);
 }
 
+void Interpreter::visit(const AssignmentExpr& expr) const
+{
+	evaluate(*expr.value);
+	byte value = currentResult;
+	environment.assign(expr.name, value);
+	currentResult = value;
+}
+
 void Interpreter::visit(const GroupingExpr& expr) const
 {
 	evaluate(*expr.expr);

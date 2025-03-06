@@ -10,6 +10,7 @@ class Environment
 public:
 	Environment() {};
 	void define(const std::string& name, byte value);
+	void assign(Token name, byte value);
 	byte get(Token name);
 
 private:

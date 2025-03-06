@@ -19,7 +19,7 @@ public:
 	void visit(const LiteralExpr& expr) const override;
 
 	void visit(const VariableExpr& expr) const override;
-	void visit(const AssignmentExpr& expr) const override {};
+	void visit(const AssignmentExpr& expr) const override;
 	void visit(const EvokeExpr& expr) const override {};
 
 	//	stmts

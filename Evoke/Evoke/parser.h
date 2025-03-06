@@ -34,6 +34,8 @@ private:
 	Token previous();
 	bool match(std::initializer_list<TokenType> types);
 	bool check(TokenType type);
+	Token consume(TokenType type, std::string message);
+	void synchronize();
 
 	std::unique_ptr<Stmt> declaration();
 	std::unique_ptr<Stmt> varDeclaration();
@@ -41,10 +43,8 @@ private:
 	std::unique_ptr<Stmt> printStatement();
 	std::unique_ptr<Stmt> expressionStatement();
 
-	Token consume(TokenType type, std::string message);
-	void synchronize();
-
 	std::unique_ptr<Expr> expression();
+	std::unique_ptr<Expr> assignment();
 	std::unique_ptr<Expr> equality();
 	std::unique_ptr<Expr> comparison();
 	std::unique_ptr<Expr> term();
