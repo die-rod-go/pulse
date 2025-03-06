@@ -54,6 +54,11 @@ void Interpreter::visit(const BinaryExpr& expr) const
 	case STAR:
 		currentResult = left * right;
 		break;
+	case PERCENT:
+		if (right == 0)
+			throw RuntimeError(expr.op, "Division by zero");
+		currentResult = left % right;
+		break;
 	case PLUS:
 		currentResult = left + right;
 		break;

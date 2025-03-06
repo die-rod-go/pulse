@@ -138,7 +138,7 @@ std::unique_ptr<Expr> Parser::comparison()
 {
 	auto expr = term();
 
-	while (match({ GREATER, GREATER_EQUAL, LESS, LESS_EQUAL }))
+	while (match({ GREATER, GREATER_EQUAL, LESS, LESS_EQUAL, EQUAL_EQUAL }))
 	{
 		Token op = previous();
 		auto right = term();
@@ -166,7 +166,7 @@ std::unique_ptr<Expr> Parser::factor()
 {
 	auto expr = unary();
 
-	while (match({ STAR, SLASH }))
+	while (match({ STAR, SLASH , PERCENT }))
 	{
 		Token op = previous();
 		auto right = unary();

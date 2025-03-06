@@ -43,6 +43,7 @@ void Scanner::scanToken()
 	case '-': addToken(MINUS, ByteLiteral()); break;
 	case '+': addToken(PLUS, ByteLiteral()); break;
 	case '*': addToken(STAR, ByteLiteral()); break;
+	case '%': addToken(PERCENT, ByteLiteral()); break;
 	case ':': addToken(COLON, ByteLiteral()); break;
 	case ';': addToken(SEMICOLON, ByteLiteral()); break;
 
