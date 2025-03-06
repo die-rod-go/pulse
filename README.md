@@ -141,4 +141,4 @@ byte test = 10 : init;
 emit init ? test == 10 : chain; // [line 2] Error: Undefined variable 'test'.
 emit chain;
 ```
-chain calls 'emit init', which has a conditional that relies on the variable 'test' which is only initialized after init is called once. So when test == 10  is checked, test does not exist. It's fairly easy to see the error here, but with longer event chains, it can get a little confusing.
+Chain calls 'emit init', which has a conditional that relies on the variable 'test' which is only initialized after init is called once. So when 'test == 10'  is checked, test does not exist. It's fairly easy to see the error here, but with longer event chains, it can get a little confusing.
