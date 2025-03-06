@@ -43,12 +43,12 @@ class Token {
 public:
 	Token();
 	Token(TokenType type, const std::string& lexeme, ByteLiteral literal, int line);
-	const TokenType type;
-	const std::string lexeme;
-	const ByteLiteral literal;
-	const int line;
-	std::string toString() const;
+	TokenType type;
+	std::string lexeme;
+	ByteLiteral literal;
+	int line;
 	static const std::unordered_map<TokenType, std::string> enumStrings;
+	std::string toString() const;
 
 private:
 };

@@ -1,11 +1,11 @@
 #include "environment.h"
 
-void Environment::define(const std::string& name, byte value)
+void Environment::defineVariable(const std::string& name, byte value)
 {
 	values[name] = value;
 }
 
-void Environment::assign(Token name, byte value)
+void Environment::assignVariable(Token name, byte value)
 {
 	if (values.find(name.lexeme) != values.end())
 	{
@@ -33,7 +33,7 @@ const std::vector<std::unique_ptr<Stmt>>& Environment::getSubscribedStatements(c
 	return emptyList;
 }
 
-byte Environment::get(Token name) const
+byte Environment::getVariable(Token name) const
 {
 	if (values.find(name.lexeme) != values.end())
 	{

@@ -90,14 +90,14 @@ void Interpreter::visit(const LiteralExpr& expr) const
 
 void Interpreter::visit(const VariableExpr& expr) const
 {
-	currentResult = environment.get(expr.name);
+	currentResult = environment.getVariable(expr.name);
 }
 
 void Interpreter::visit(const AssignmentExpr& expr) const
 {
 	evaluate(*expr.value);
 	byte value = currentResult;
-	environment.assign(expr.name, value);
+	environment.assignVariable(expr.name, value);
 	currentResult = value;
 }
 
@@ -113,7 +113,7 @@ void Interpreter::visit(const ExpressionStmt& stmt, bool evoked) const
 		evaluate(*stmt.expr);
 	else
 	{
-		environment.subscribe(stmt.associatedEvent.lexeme, stmt.clone());
+		environment.subscribe(stmt.subscribedEvent.lexeme, stmt.clone());
 	}
 }
 
@@ -127,7 +127,7 @@ void Interpreter::visit(const PrintStmt& stmt, bool evoked) const
 	}
 	else
 	{
-		environment.subscribe(stmt.associatedEvent.lexeme, stmt.clone());
+		environment.subscribe(stmt.subscribedEvent.lexeme, stmt.clone());
 	}
 }
 
@@ -142,15 +142,32 @@ void Interpreter::visit(const ByteStmt& stmt, bool evoked) const
 			value = currentResult;
 		}
 
-		environment.define(stmt.name.lexeme, value);
+		environment.defineVariable(stmt.name.lexeme, value);
 	}
 	else
 	{
-		environment.subscribe(stmt.associatedEvent.lexeme, stmt.clone());
+		environment.subscribe(stmt.subscribedEvent.lexeme, stmt.clone());
 	}
 }
 
 void Interpreter::visit(const EvokeStmt& stmt, bool evoked) const
+{
+	//
+	if (stmt.subscribedEvent.type == NONE)
+	{
+		evoke(stmt);
+	}
+	else if (evoked)
+	{
+		evoke(stmt);
+	}
+	else
+	{
+		environment.subscribe(stmt.subscribedEvent.lexeme, stmt.clone());
+	}
+}
+
+void Interpreter::evoke(const EvokeStmt& stmt) const
 {
 	if (stmt.condition != nullptr)
 	{

@@ -24,6 +24,7 @@ public:
 	void visit(const PrintStmt& stmt, bool evoked) const override;
 	void visit(const ByteStmt& stmt, bool evoked) const override;
 	void visit(const EvokeStmt& stmt, bool evoked) const override;
+	void evoke(const EvokeStmt& stmt) const;
 
 private:
 	void execute(const Stmt& stmt, bool evoked) const;

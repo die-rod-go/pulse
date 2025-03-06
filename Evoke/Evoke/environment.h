@@ -14,9 +14,9 @@ public:
 	Environment() {};
 
 	// Variable handling
-	void define(const std::string& name, byte value);
-	void assign(Token name, byte value);
-	byte get(Token name) const;
+	void defineVariable(const std::string& name, byte value);
+	void assignVariable(Token name, byte value);
+	byte getVariable(Token name) const;
 
 	// Event handling
 	void subscribe(const std::string& eventName, std::unique_ptr<Stmt> stmt);

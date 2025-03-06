@@ -19,74 +19,74 @@ public:
 
 class PrintStmt : public Stmt {
 public:
-	Token associatedEvent;
+	Token subscribedEvent;
 	std::unique_ptr<Expr> expr;
 
-	PrintStmt(Token associatedEvent, std::unique_ptr<Expr> expr)
-		: associatedEvent(associatedEvent), expr(std::move(expr)) {}
+	PrintStmt(Token subscribedEvent, std::unique_ptr<Expr> expr)
+		: subscribedEvent(subscribedEvent), expr(std::move(expr)) {}
 
 	void accept(const StmtVisitor& visitor, bool evoked) const override {
 		visitor.visit(*this, evoked);
 	}
 
 	std::unique_ptr<Stmt> clone() const override {
-		// Deep copy the expression
-		return std::make_unique<PrintStmt>(associatedEvent, expr ? expr->clone() : nullptr);
+		return std::make_unique<PrintStmt>(subscribedEvent, expr ? expr->clone() : nullptr);
 	}
 };
 
 class ExpressionStmt : public Stmt {
 public:
-	Token associatedEvent;
+	Token subscribedEvent;
 	std::unique_ptr<Expr> expr;
 
-	ExpressionStmt(Token associatedEvent, std::unique_ptr<Expr> expr)
-		: associatedEvent(associatedEvent), expr(std::move(expr)) {}
+	ExpressionStmt(Token subscribedEvent, std::unique_ptr<Expr> expr)
+		: subscribedEvent(subscribedEvent), expr(std::move(expr)) {}
 
 	void accept(const StmtVisitor& visitor, bool evoked) const override {
 		visitor.visit(*this, evoked);
 	}
 
 	std::unique_ptr<Stmt> clone() const override {
-		// Deep copy the expression
-		return std::make_unique<ExpressionStmt>(associatedEvent, expr ? expr->clone() : nullptr);
+		return std::make_unique<ExpressionStmt>(subscribedEvent, expr ? expr->clone() : nullptr);
 	}
 };
 
 class ByteStmt : public Stmt {
 public:
-	Token associatedEvent;
+	Token subscribedEvent;
 	Token name;
 	std::unique_ptr<Expr> initializer;
 
-	ByteStmt(Token associatedEvent, Token name, std::unique_ptr<Expr> initializer)
-		: associatedEvent(associatedEvent), name(name), initializer(std::move(initializer)) {}
+	ByteStmt(Token subscribedEvent, Token name, std::unique_ptr<Expr> initializer)
+		: subscribedEvent(subscribedEvent), name(name), initializer(std::move(initializer)) {}
 
 	void accept(const StmtVisitor& visitor, bool evoked) const override {
 		visitor.visit(*this, evoked);
 	}
 
 	std::unique_ptr<Stmt> clone() const override {
-		// Deep copy the initializer
-		return std::make_unique<ByteStmt>(associatedEvent, name, initializer ? initializer->clone() : nullptr);
+		return std::make_unique<ByteStmt>(subscribedEvent, name, initializer ? initializer->clone() : nullptr);
 	}
 };
 
 class EvokeStmt : public Stmt {
 public:
 	Token eventName;
+	Token subscribedEvent;
 	Token op;
 	std::unique_ptr<Expr> condition;
 
-	explicit EvokeStmt(Token eventName, Token op, std::unique_ptr<Expr> condition)
-		: eventName(eventName), op(op), condition(std::move(condition)) {}
+	EvokeStmt(Token eventName, Token subscribedEvent, Token op, std::unique_ptr<Expr> condition)
+		: eventName(eventName), subscribedEvent(subscribedEvent), op(op), condition(std::move(condition)) {}
+
+	EvokeStmt(Token eventName, Token op, std::unique_ptr<Expr> condition)
+		: eventName(eventName), subscribedEvent(Token()), op(op), condition(std::move(condition)) {}
 
 	void accept(const StmtVisitor& visitor, bool evoked) const override {
 		visitor.visit(*this, evoked);
 	}
 
 	std::unique_ptr<Stmt> clone() const override {
-		// Deep copy the condition
 		return std::make_unique<EvokeStmt>(eventName, op, condition ? condition->clone() : nullptr);
 	}
 };

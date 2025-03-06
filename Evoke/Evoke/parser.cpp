@@ -45,10 +45,10 @@ std::unique_ptr<Stmt> Parser::varDeclaration()
 	}
 
 	consume(COLON, "Expect ':' after variable declaration.");
-	Token associatedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
+	Token subscribedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
 	consume(SEMICOLON, "Expect ';' after variable declaration");
 
-	return std::make_unique<ByteStmt>(associatedEvent, name, std::move(initializer));
+	return std::make_unique<ByteStmt>(subscribedEvent, name, std::move(initializer));
 }
 
 std::unique_ptr<Stmt> Parser::statement()
@@ -63,35 +63,41 @@ std::unique_ptr<Stmt> Parser::printStatement()
 {
 	std::unique_ptr<Expr> value = expression();
 	consume(COLON, "Expect ':' after print expression");
-	Token associatedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
+	Token subscribedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
 	consume(SEMICOLON, "Expect ';' after value.");
-	return std::make_unique<PrintStmt>(associatedEvent, std::move(value));
+	return std::make_unique<PrintStmt>(subscribedEvent, std::move(value));
 }
 
 std::unique_ptr<Stmt> Parser::expressionStatement()
 {
 	std::unique_ptr<Expr> expr = expression();
 	consume(COLON, "Expect ':' after expression.");
-	Token associatedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
+	Token subscribedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
 	consume(SEMICOLON, "Expect ';' after expression.");
-	return std::make_unique<ExpressionStmt>(associatedEvent, std::move(expr));
+	return std::make_unique<ExpressionStmt>(subscribedEvent, std::move(expr));
 }
 
 std::unique_ptr<Stmt> Parser::evokeStatement()
 {
 	Token eventName = consume(IDENTIFIER, "Expect event name after 'evoke'.");
 	std::unique_ptr<Expr> condition = nullptr;
+
+	Token op;
 	if (match({ QUESTION, QUESTION_QUESTION }))
 	{
-		Token op = previous();
+		op = previous();
 		condition = expression();
-		consume(SEMICOLON, "Expect ';' after evoke statement.");
-		return std::make_unique<EvokeStmt>(eventName, op, std::move(condition));
+	}
+
+	Token subscribedEvent;
+	if (match({ COLON }))
+	{
+		subscribedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
 	}
 
 	consume(SEMICOLON, "Expect ';' after evoke statement.");
 
-	return std::make_unique<EvokeStmt>(eventName, Token(), std::move(condition));
+	return std::make_unique<EvokeStmt>(eventName, subscribedEvent, op, std::move(condition));
 }
 
 std::unique_ptr<Expr> Parser::expression()
