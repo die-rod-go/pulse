@@ -23,8 +23,8 @@ public:
 	void visit(const ExpressionStmt& stmt, bool evoked) const override;
 	void visit(const PrintStmt& stmt, bool evoked) const override;
 	void visit(const ByteStmt& stmt, bool evoked) const override;
-	void visit(const EvokeStmt& stmt, bool evoked) const override;
-	void emit(const EvokeStmt& stmt) const;
+	void visit(const EmitStmt& stmt, bool evoked) const override;
+	void emit(const EmitStmt& stmt) const;
 
 private:
 	void execute(const Stmt& stmt, bool evoked) const;

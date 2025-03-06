@@ -150,7 +150,7 @@ void Interpreter::visit(const ByteStmt& stmt, bool evoked) const
 	}
 }
 
-void Interpreter::visit(const EvokeStmt& stmt, bool evoked) const
+void Interpreter::visit(const EmitStmt& stmt, bool evoked) const
 {
 	//
 	if (stmt.subscribedEvent.type == NONE)
@@ -167,7 +167,7 @@ void Interpreter::visit(const EvokeStmt& stmt, bool evoked) const
 	}
 }
 
-void Interpreter::emit(const EvokeStmt& stmt) const
+void Interpreter::emit(const EmitStmt& stmt) const
 {
 	if (stmt.condition != nullptr)
 	{

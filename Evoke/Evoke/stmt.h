@@ -7,7 +7,7 @@ public:
 	virtual void visit(const class PrintStmt& stmt, bool evoked) const = 0;
 	virtual void visit(const class ExpressionStmt& stmt, bool evoked) const = 0;
 	virtual void visit(const class ByteStmt& stmt, bool evoked) const = 0;
-	virtual void visit(const class EvokeStmt& stmt, bool evoked) const = 0;
+	virtual void visit(const class EmitStmt& stmt, bool evoked) const = 0;
 };
 
 class Stmt {
@@ -69,17 +69,17 @@ public:
 	}
 };
 
-class EvokeStmt : public Stmt {
+class EmitStmt : public Stmt {
 public:
 	Token eventName;
 	Token subscribedEvent;
 	Token op;
 	std::unique_ptr<Expr> condition;
 
-	EvokeStmt(Token eventName, Token subscribedEvent, Token op, std::unique_ptr<Expr> condition)
+	EmitStmt(Token eventName, Token subscribedEvent, Token op, std::unique_ptr<Expr> condition)
 		: eventName(eventName), subscribedEvent(subscribedEvent), op(op), condition(std::move(condition)) {}
 
-	EvokeStmt(Token eventName, Token op, std::unique_ptr<Expr> condition)
+	EmitStmt(Token eventName, Token op, std::unique_ptr<Expr> condition)
 		: eventName(eventName), subscribedEvent(Token()), op(op), condition(std::move(condition)) {}
 
 	void accept(const StmtVisitor& visitor, bool evoked) const override {
@@ -87,6 +87,6 @@ public:
 	}
 
 	std::unique_ptr<Stmt> clone() const override {
-		return std::make_unique<EvokeStmt>(eventName, op, condition ? condition->clone() : nullptr);
+		return std::make_unique<EmitStmt>(eventName, op, condition ? condition->clone() : nullptr);
 	}
 };

@@ -1,23 +1,19 @@
-byte secretNumber = 33 : init;
-byte numGuesses = 0 : init;
-byte low = 0 : init;
-byte high = 255 : init;
-byte numGuessed : init;
+byte n = 255 : init; // Number of Fibonacci numbers to generate
+byte a = 0 : init;
+byte b = 1 : init;
+byte count = 0 : init;
 emit init;
 
-numGuessed = (high + low) / 2 : guess;
-numGuesses = numGuesses + 1 : guess;
+// Print the current Fibonacci number
+print a : fibonacci_loop;
 
-low = numGuessed : guessed_too_high;
-high = numGuessed : guessed_too_low;
+// Calculate the next Fibonacci number
+byte next = a + b : fibonacci_loop;
+a = b : fibonacci_loop;
+b = next : fibonacci_loop;
 
-emit guessed_too_high ? numGuessed > secretNumber : guess;
-emit guessed_too_low ? numGuessed < secretNumber : guess;
+// Increment the counter
+count = count + 1 : fibonacci_loop;
 
-emit guess ?? numGuessed != secretNumber;
-
-print numGuessed : done;
-print numGuesses : done;
-emit done;
-
-
+// Emit fibonacci_loop until count >= n
+emit fibonacci_loop ?? count < n;

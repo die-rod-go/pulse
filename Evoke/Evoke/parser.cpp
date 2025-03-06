@@ -97,7 +97,7 @@ std::unique_ptr<Stmt> Parser::evokeStatement()
 
 	consume(SEMICOLON, "Expect ';' after Pulse statement.");
 
-	return std::make_unique<EvokeStmt>(eventName, subscribedEvent, op, std::move(condition));
+	return std::make_unique<EmitStmt>(eventName, subscribedEvent, op, std::move(condition));
 }
 
 std::unique_ptr<Expr> Parser::expression()
