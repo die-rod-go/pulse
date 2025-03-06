@@ -106,7 +106,10 @@ void Interpreter::visit(const ExpressionStmt& stmt, bool evoked) const
 {
 	if (evoked)
 		evaluate(*stmt.expr);
-	else {}
+	else
+	{
+		environment.subscribe(stmt.associatedEvent.lexeme, stmt.clone());
+	}
 }
 
 void Interpreter::visit(const PrintStmt& stmt, bool evoked) const
@@ -117,8 +120,10 @@ void Interpreter::visit(const PrintStmt& stmt, bool evoked) const
 		byte value = currentResult;
 		std::cout << (int)value << std::endl;
 	}
-	else {}
-	//environment.subscribe(stmt.associatedEvent.lexeme, std::make_unique<PrintStmt>(stmt));
+	else
+	{
+		environment.subscribe(stmt.associatedEvent.lexeme, stmt.clone());
+	}
 }
 
 void Interpreter::visit(const ByteStmt& stmt, bool evoked) const
@@ -134,8 +139,10 @@ void Interpreter::visit(const ByteStmt& stmt, bool evoked) const
 
 		environment.define(stmt.name.lexeme, value);
 	}
-	else {}
-	//environment.subscribe(stmt.associatedEvent.lexeme, std::make_unique<ByteStmt>(stmt));
+	else
+	{
+		environment.subscribe(stmt.associatedEvent.lexeme, stmt.clone());
+	}
 }
 
 void Interpreter::visit(const EvokeStmt& stmt, bool evoked) const
