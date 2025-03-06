@@ -1,50 +1,92 @@
 #pragma once
+#include "expr.h"
+#include <memory>
 
 class StmtVisitor {
 public:
-    virtual void visit(const class PrintStmt& stmt) const = 0;
-    virtual void visit(const class ExpressionStmt& stmt) const = 0;
-    virtual void visit(const class ByteStmt& stmt) const = 0;
+	virtual void visit(const class PrintStmt& stmt, bool evoked) const = 0;
+	virtual void visit(const class ExpressionStmt& stmt, bool evoked) const = 0;
+	virtual void visit(const class ByteStmt& stmt, bool evoked) const = 0;
+	virtual void visit(const class EvokeStmt& stmt, bool evoked) const = 0;
 };
 
-class Stmt
-{
+class Stmt {
 public:
 	virtual ~Stmt() = default;
-	virtual void accept(const StmtVisitor& visitor) const = 0;
+	virtual void accept(const StmtVisitor& visitor, bool evoked) const = 0;
+	virtual std::unique_ptr<Stmt> clone() const = 0;
 };
 
-class PrintStmt : public Stmt 
-{
+class PrintStmt : public Stmt {
 public:
-    std::unique_ptr<Expr> expr;
-    PrintStmt(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
-    void accept(const StmtVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
+	Token subscribedEvent;
+	std::unique_ptr<Expr> expr;
+
+	PrintStmt(Token subscribedEvent, std::unique_ptr<Expr> expr)
+		: subscribedEvent(subscribedEvent), expr(std::move(expr)) {}
+
+	void accept(const StmtVisitor& visitor, bool evoked) const override {
+		visitor.visit(*this, evoked);
+	}
+
+	std::unique_ptr<Stmt> clone() const override {
+		return std::make_unique<PrintStmt>(subscribedEvent, expr ? expr->clone() : nullptr);
+	}
 };
 
-class ExpressionStmt : public Stmt
-{
+class ExpressionStmt : public Stmt {
 public:
-    std::unique_ptr<Expr> expr;
-    ExpressionStmt(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
-    void accept(const StmtVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
+	Token subscribedEvent;
+	std::unique_ptr<Expr> expr;
+
+	ExpressionStmt(Token subscribedEvent, std::unique_ptr<Expr> expr)
+		: subscribedEvent(subscribedEvent), expr(std::move(expr)) {}
+
+	void accept(const StmtVisitor& visitor, bool evoked) const override {
+		visitor.visit(*this, evoked);
+	}
+
+	std::unique_ptr<Stmt> clone() const override {
+		return std::make_unique<ExpressionStmt>(subscribedEvent, expr ? expr->clone() : nullptr);
+	}
 };
 
-class ByteStmt : public Stmt
-{
+class ByteStmt : public Stmt {
 public:
-    Token name;
-    std::unique_ptr<Expr> initializer;
+	Token subscribedEvent;
+	Token name;
+	std::unique_ptr<Expr> initializer;
 
-    ByteStmt(Token name, std::unique_ptr<Expr> initializer) : name(name), initializer(std::move(initializer)) {}
-    void accept(const StmtVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
+	ByteStmt(Token subscribedEvent, Token name, std::unique_ptr<Expr> initializer)
+		: subscribedEvent(subscribedEvent), name(name), initializer(std::move(initializer)) {}
+
+	void accept(const StmtVisitor& visitor, bool evoked) const override {
+		visitor.visit(*this, evoked);
+	}
+
+	std::unique_ptr<Stmt> clone() const override {
+		return std::make_unique<ByteStmt>(subscribedEvent, name, initializer ? initializer->clone() : nullptr);
+	}
+};
+
+class EvokeStmt : public Stmt {
+public:
+	Token eventName;
+	Token subscribedEvent;
+	Token op;
+	std::unique_ptr<Expr> condition;
+
+	EvokeStmt(Token eventName, Token subscribedEvent, Token op, std::unique_ptr<Expr> condition)
+		: eventName(eventName), subscribedEvent(subscribedEvent), op(op), condition(std::move(condition)) {}
+
+	EvokeStmt(Token eventName, Token op, std::unique_ptr<Expr> condition)
+		: eventName(eventName), subscribedEvent(Token()), op(op), condition(std::move(condition)) {}
+
+	void accept(const StmtVisitor& visitor, bool evoked) const override {
+		visitor.visit(*this, evoked);
+	}
+
+	std::unique_ptr<Stmt> clone() const override {
+		return std::make_unique<EvokeStmt>(eventName, op, condition ? condition->clone() : nullptr);
+	}
 };

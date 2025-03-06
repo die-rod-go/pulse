@@ -7,7 +7,7 @@ enum TokenType {
 	// Single-character tokens.
 	LEFT_PAREN, RIGHT_PAREN, // ( )
 	LEFT_BRACE, RIGHT_BRACE, // { }
-	COMMA, MINUS, PLUS, STAR, // , - + * 
+	COMMA, MINUS, PLUS, STAR, PERCENT,// , - + * % 
 	SLASH, COLON, SEMICOLON, // / : ;
 
 	// One or two character tokens.
@@ -41,14 +41,14 @@ public:
 
 class Token {
 public:
-	const TokenType type;
-	const std::string lexeme;
-	const ByteLiteral literal;
-	const int line;
-
+	Token();
 	Token(TokenType type, const std::string& lexeme, ByteLiteral literal, int line);
-	std::string toString() const;
+	TokenType type;
+	std::string lexeme;
+	ByteLiteral literal;
+	int line;
 	static const std::unordered_map<TokenType, std::string> enumStrings;
+	std::string toString() const;
 
 private:
 };

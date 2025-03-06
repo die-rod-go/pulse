@@ -14,7 +14,6 @@ public:
 
 	void visit(const VariableExpr& expr) const override;
 	void visit(const AssignmentExpr& expr) const override;
-	void visit(const EvokeExpr& expr) const override;
 
 private:
 	mutable std::ostringstream result;

@@ -1,46 +1,37 @@
-program       ::= statement* ;
+Program         = { Statement } ;
 
-statement     ::= variable_declaration
-                | expression_statement
-                | evoke_statement
-                | conditional_evoke
-                | include_statement ;
+Statement       = VariableDeclaration | PrintStatement | ExpressionStatement | EvokeStatement ;
 
-variable_declaration ::= identifier "=" expression ":" event_identifier ";" ;
+VariableDeclaration = "byte" Identifier "=" Expression ":" EventName ";" ;
 
-expression_statement ::= expression ":" event_identifier ";" ;
+PrintStatement  = "print" Expression ":" EventName ";" ;
 
-evoke_statement  ::= "evoke" event_identifier ";" ;
+ExpressionStatement = Expression ":" EventName ";" ;
 
-conditional_evoke ::= "evoke" event_identifier ("?" | "??") expression ";" ;
+Assignment      = Identifier "=" Expression ":" EventName ";" ;
 
-include_statement ::= "#include" string_literal ";" ;
+EvokeStatement  = "evoke" EventName [ "?" Expression | "??" Expression ] ";" ;
 
-expression     ::= assignment ;
+Expression      = Equality ;
 
-assignment     ::= identifier "=" expression
-                | binary ;
+Equality        = Comparison { ("==" | "!=") Comparison } ;
 
-binary ::= unary (("+" | "-" | "*" | "/" | "<<" | ">>" | ">" | ">=" | "<" | "<=" | "==" | "!=") unary)* ;
+Comparison      = Term { (">" | ">=" | "<" | "<=") Term } ;
 
-unary          ::= ("-" | "!") unary
-                | primary ;
+Term            = Factor { ("+" | "-") Factor } ;
 
-primary        ::= identifier
-                | number
-                | byte_literal
-                | "(" expression ")" ;
+Factor          = Unary { ("*" | "/") Unary } ;
 
-event_identifier ::= identifier ;
+Unary           = ("!") Unary | Primary ;
 
-identifier     ::= letter (letter | digit | "_")* ;
+Primary         = Number | Identifier | "(" Expression ")" ;
 
-number         ::= digit+ ;
+Number          = Digit { Digit } ;
 
-byte_literal   ::= "0b" ("0" | "1"){8} ;   // Must be exactly 8 bits
+Identifier      = Letter { Letter | Digit | "_" } ;
 
-string_literal ::= '"' character* '"' ;
+EventName       = Identifier ;
 
-letter         ::= "a"–"z" | "A"–"Z" ;
-digit          ::= "0"–"9" ;
-character      ::= any valid character except `"` ;
+Letter          = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z" ;
+
+Digit           = "0" | "1" | ... | "9" ;

@@ -11,7 +11,6 @@ public:
 	virtual void visit(const class LiteralExpr& expr) const = 0;
 	virtual void visit(const class VariableExpr& expr) const = 0;
 	virtual void visit(const class AssignmentExpr& expr) const = 0;
-	virtual void visit(const class EvokeExpr& expr) const = 0;
 };
 
 class Expr
@@ -19,6 +18,7 @@ class Expr
 public:
 	virtual ~Expr() = default;
 	virtual void accept(const ExprVisitor& visitor) const = 0;
+	virtual std::unique_ptr<Expr> clone() const = 0;
 };
 
 class UnaryExpr : public Expr
@@ -33,6 +33,10 @@ public:
 	void accept(const ExprVisitor& visitor) const override
 	{
 		visitor.visit(*this);
+	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<UnaryExpr>(op, operand ? operand->clone() : nullptr);
 	}
 };
 
@@ -50,6 +54,10 @@ public:
 	{
 		visitor.visit(*this);
 	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<BinaryExpr>(left ? left->clone() : nullptr, op, right ? right->clone() : nullptr);
+	}
 };
 
 class GroupingExpr : public Expr
@@ -63,6 +71,10 @@ public:
 	{
 		visitor.visit(*this);
 	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<GroupingExpr>(expr ? expr->clone() : nullptr);
+	}
 };
 
 class LiteralExpr : public Expr
@@ -74,6 +86,10 @@ public:
 	{
 		visitor.visit(*this);
 	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<LiteralExpr>(literal);
+	}
 };
 
 class VariableExpr : public Expr
@@ -84,6 +100,10 @@ public:
 	void accept(const ExprVisitor& visitor) const override
 	{
 		visitor.visit(*this);
+	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<VariableExpr>(name);
 	}
 };
 
@@ -100,19 +120,8 @@ public:
 	{
 		visitor.visit(*this);
 	}
-};
 
-class EvokeExpr : public Expr
-{
-public:
-	Token eventName;
-	Token op;
-	std::unique_ptr<Expr> condition;
-
-	explicit EvokeExpr(Token eventName, Token op, std::unique_ptr<Expr> condition)
-		: eventName(eventName), op(op), condition(std::move(condition)) {}
-	void accept(const ExprVisitor& visitor) const override
-	{
-		visitor.visit(*this);
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<AssignmentExpr>(name, value ? value->clone() : nullptr);
 	}
 };

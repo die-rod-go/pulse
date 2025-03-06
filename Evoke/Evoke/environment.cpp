@@ -1,11 +1,11 @@
 #include "environment.h"
 
-void Environment::define(const std::string& name, byte value)
+void Environment::defineVariable(const std::string& name, byte value)
 {
 	values[name] = value;
 }
 
-void Environment::assign(Token name, byte value)
+void Environment::assignVariable(Token name, byte value)
 {
 	if (values.find(name.lexeme) != values.end())
 	{
@@ -17,9 +17,25 @@ void Environment::assign(Token name, byte value)
 
 }
 
-byte Environment::get(Token name)
+void Environment::subscribe(const std::string& eventName, std::unique_ptr<Stmt> stmt)
 {
-	if(values.find(name.lexeme) != values.end())
+	eventMap[eventName].push_back(std::move(stmt));
+}
+
+const std::vector<std::unique_ptr<Stmt>>& Environment::getSubscribedStatements(const std::string& eventName) const
+{
+	std::vector<std::unique_ptr<Stmt>> emptyList;
+	auto iterator = eventMap.find(eventName);
+	if (iterator != eventMap.end())
+	{
+		return iterator->second;
+	}
+	return emptyList;
+}
+
+byte Environment::getVariable(Token name) const
+{
+	if (values.find(name.lexeme) != values.end())
 	{
 		return values.at(name.lexeme);
 	}

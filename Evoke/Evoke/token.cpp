@@ -19,6 +19,9 @@ const std::unordered_map<TokenType, std::string> Token::enumStrings = {
 	{NONE, "NONE"}
 };
 
+Token::Token()
+	: type(TokenType::NONE), lexeme(""), literal(0), line(-1) {}
+
 Token::Token(TokenType type, const std::string& lexeme, ByteLiteral literal, int line)
 	: type(type), lexeme(lexeme), literal(literal), line(line) {}
 
