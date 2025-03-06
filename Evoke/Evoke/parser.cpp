@@ -1,5 +1,5 @@
 #include "parser.h"
-#include "evoke.h"
+#include "pulse.h"
 
 Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)), current(0) {}
 
@@ -14,7 +14,7 @@ std::vector<std::unique_ptr<Stmt>> Parser::parse()
 	}
 	catch (ParseError& error)
 	{
-		Evoke::error(error.token, error.message);
+		Pulse::error(error.token, error.message);
 	}
 	return statements;
 }
@@ -28,7 +28,7 @@ std::unique_ptr<Stmt> Parser::declaration()
 	}
 	catch (ParseError error)
 	{
-		Evoke::error(error.token, error.message);
+		Pulse::error(error.token, error.message);
 		synchronize();
 		return nullptr;
 	}
@@ -54,7 +54,7 @@ std::unique_ptr<Stmt> Parser::varDeclaration()
 std::unique_ptr<Stmt> Parser::statement()
 {
 	if (match({ PRINT })) return printStatement();
-	if (match({ EVOKE })) return evokeStatement();
+	if (match({ EMIT })) return evokeStatement();
 
 	return expressionStatement();
 }
@@ -79,7 +79,7 @@ std::unique_ptr<Stmt> Parser::expressionStatement()
 
 std::unique_ptr<Stmt> Parser::evokeStatement()
 {
-	Token eventName = consume(IDENTIFIER, "Expect event name after 'evoke'.");
+	Token eventName = consume(IDENTIFIER, "Expect event name after 'Pulse'.");
 	std::unique_ptr<Expr> condition = nullptr;
 
 	Token op;
@@ -95,7 +95,7 @@ std::unique_ptr<Stmt> Parser::evokeStatement()
 		subscribedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
 	}
 
-	consume(SEMICOLON, "Expect ';' after evoke statement.");
+	consume(SEMICOLON, "Expect ';' after Pulse statement.");
 
 	return std::make_unique<EvokeStmt>(eventName, subscribedEvent, op, std::move(condition));
 }
@@ -121,7 +121,7 @@ std::unique_ptr<Expr> Parser::assignment()
 			return std::make_unique<AssignmentExpr>(name, std::move(value));
 		}
 
-		Evoke::error(equals, "Invalid assignment target.");
+		Pulse::error(equals, "Invalid assignment target.");
 	}
 	return expr;
 }
@@ -271,7 +271,7 @@ void Parser::synchronize()
 		if (previous().type == SEMICOLON) return;
 		switch (peek().type)
 		{
-		case EVOKE:
+		case EMIT:
 		case CLEAR:
 		case IDENTIFIER:
 			return;

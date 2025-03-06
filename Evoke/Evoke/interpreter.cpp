@@ -1,5 +1,5 @@
 #include "interpreter.h"
-#include "evoke.h"
+#include "pulse.h"
 
 void Interpreter::interpret(std::vector<std::unique_ptr<Stmt>>& statements) const
 {
@@ -11,7 +11,7 @@ void Interpreter::interpret(std::vector<std::unique_ptr<Stmt>>& statements) cons
 	}
 	catch (RuntimeError& error)
 	{
-		Evoke::runtimeError(error.token, error.message);
+		Pulse::runtimeError(error.token, error.message);
 	}
 }
 
@@ -155,11 +155,11 @@ void Interpreter::visit(const EvokeStmt& stmt, bool evoked) const
 	//
 	if (stmt.subscribedEvent.type == NONE)
 	{
-		evoke(stmt);
+		emit(stmt);
 	}
 	else if (evoked)
 	{
-		evoke(stmt);
+		emit(stmt);
 	}
 	else
 	{
@@ -167,7 +167,7 @@ void Interpreter::visit(const EvokeStmt& stmt, bool evoked) const
 	}
 }
 
-void Interpreter::evoke(const EvokeStmt& stmt) const
+void Interpreter::emit(const EvokeStmt& stmt) const
 {
 	if (stmt.condition != nullptr)
 	{

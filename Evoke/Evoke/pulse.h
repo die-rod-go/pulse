@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -8,10 +9,10 @@
 #include "Scanner.h"
 #include "interpreter.h"
 
-class Evoke
+class Pulse
 {
 public:
-	Evoke();
+	Pulse();
 	static bool hadError;
 	static bool hadRuntimeError;
 	static void error(int line, std::string message);

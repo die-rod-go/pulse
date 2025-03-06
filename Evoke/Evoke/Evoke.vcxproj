@@ -129,7 +129,7 @@
   <ItemGroup>
     <ClCompile Include="ASTPrinter.cpp" />
     <ClCompile Include="environment.cpp" />
-    <ClCompile Include="evoke.cpp" />
+    <ClCompile Include="pulse.cpp" />
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
@@ -140,7 +140,7 @@
     <ClInclude Include="ASTPrinter.h" />
     <ClInclude Include="environment.h" />
     <ClInclude Include="errors.h" />
-    <ClInclude Include="evoke.h" />
+    <ClInclude Include="pulse.h" />
     <ClInclude Include="interpreter.h" />
     <ClInclude Include="expr.h" />
     <ClInclude Include="parser.h" />
@@ -150,7 +150,7 @@
     <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="example.evo" />
+    <None Include="example.pls" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,7 +14,7 @@ const std::unordered_map<TokenType, std::string> Token::enumStrings = {
 	{PIPE, "PIPE"}, {PIPE_PIPE, "PIPE_PIPE"},
 	{QUESTION, "QUESTION"}, {QUESTION_QUESTION, "QUESTION_QUESTION"},
 	{IDENTIFIER, "IDENTIFIER"}, {BYTE_LITERAL, "BYTE"},
-	{EVOKE, "EVOKE"}, {CLEAR, "CLEAR"},
+	{EMIT, "EMIT"}, {CLEAR, "CLEAR"},
 	{END_OF_FILE, "END_OF_FILE"},
 	{NONE, "NONE"}
 };

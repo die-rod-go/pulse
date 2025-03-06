@@ -2,7 +2,7 @@
 #include <bitset>
 
 const std::unordered_map<std::string, TokenType> Scanner::keywords = {
-	{"evoke", EVOKE},
+	{"emit", EMIT},
 	{"clear", CLEAR},
 	{"byte", BYTE},
 	{"print", PRINT}
@@ -116,7 +116,7 @@ void Scanner::scanToken()
 		else if (isalpha(c) || c == '_')
 			identifier();
 		else
-			Evoke::error(line, "Unexpected character: '" + std::string(1, c) + "'" + "at: " + std::to_string(currentOnLine));
+			Pulse::error(line, "Unexpected character: '" + std::string(1, c) + "'" + "at: " + std::to_string(currentOnLine));
 	}
 }
 
@@ -173,7 +173,7 @@ void Scanner::byteLiteral()
 
 	//	if the bit length is not exactly 8, report an error
 	if (bitLength != 8) {
-		Evoke::error(line, "Invalid byte literal. Expected 8 bits, got: " + std::to_string(bitLength));
+		Pulse::error(line, "Invalid byte literal. Expected 8 bits, got: " + std::to_string(bitLength));
 		return;
 	}
 
@@ -200,7 +200,7 @@ void Scanner::handleDigit()
 byte Scanner::binaryStringToByte(const std::string& binaryString)
 {
 	if (binaryString.length() != 8) {
-		Evoke::error(line, "Invalid byte literal. Expected 8 bits, got: " + std::to_string(binaryString.length()));
+		Pulse::error(line, "Invalid byte literal. Expected 8 bits, got: " + std::to_string(binaryString.length()));
 		return 0;
 	}
 	return static_cast<byte>(std::bitset<8>(binaryString).to_ulong());

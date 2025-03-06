@@ -1,22 +1,22 @@
-#include "evoke.h"
+#include "pulse.h"
 #include "parser.h"
 #include "ASTPrinter.h"
 
-bool Evoke::hadError = false;
-bool Evoke::hadRuntimeError = false;
-const Interpreter Evoke::interpreter = Interpreter();
+bool Pulse::hadError = false;
+bool Pulse::hadRuntimeError = false;
+const Interpreter Pulse::interpreter = Interpreter();
 
-Evoke::Evoke()
+Pulse::Pulse()
 {
 
 }
 
-void Evoke::error(int line, std::string message)
+void Pulse::error(int line, std::string message)
 {
 	report(line, "", message);
 }
 
-void Evoke::error(Token token, std::string message)
+void Pulse::error(Token token, std::string message)
 {
 	if (token.type == END_OF_FILE)
 		report(token.line, " at end", message);
@@ -24,13 +24,13 @@ void Evoke::error(Token token, std::string message)
 		report(token.line, " at '" + token.lexeme + "'", message);
 }
 
-void Evoke::runtimeError(Token token, std::string message)
+void Pulse::runtimeError(Token token, std::string message)
 {
 	hadRuntimeError = true;
 	std::cout << "[line " << token.line << "] Error: " << message << std::endl;
 }
 
-void Evoke::runFile(const std::string& path)
+void Pulse::runFile(const std::string& path)
 {
 	//	open file
 	std::ifstream myFile(path);
@@ -51,7 +51,7 @@ void Evoke::runFile(const std::string& path)
 		exit(EXIT_FAILURE);
 }
 
-void Evoke::runPrompt()
+void Pulse::runPrompt()
 {
 	std::string line;
 
@@ -69,7 +69,7 @@ void Evoke::runPrompt()
 	}
 }
 
-void Evoke::run(std::string source)
+void Pulse::run(std::string source)
 {
 	Scanner scanner(source);
 	std::vector<Token> tokens = scanner.scanTokens();
@@ -83,7 +83,7 @@ void Evoke::run(std::string source)
 
 }
 
-void Evoke::report(int line, std::string location, std::string& message)
+void Pulse::report(int line, std::string location, std::string& message)
 {
 	std::cout << "[line " << line << "] Error" << location << ": " << message << std::endl;
 	hadError = true;

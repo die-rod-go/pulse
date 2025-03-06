@@ -24,7 +24,7 @@
     <ClCompile Include="token.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="evoke.cpp">
+    <ClCompile Include="pulse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ASTPrinter.cpp">
@@ -50,7 +50,7 @@
     <ClInclude Include="types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="evoke.h">
+    <ClInclude Include="pulse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="expr.h">
@@ -76,7 +76,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="example.evo">
+    <None Include="example.pls">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
