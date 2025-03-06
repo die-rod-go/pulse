@@ -135,7 +135,7 @@ byte numGuesses = 0 : init;
 byte low = 0 : init;
 byte high = 255 : init;
 byte numGuessed : init;
-evoke init;
+emit init;
 
 numGuessed = (high + low) / 2 : guess;
 numGuesses = numGuesses + 1 : guess;
@@ -144,16 +144,16 @@ low = numGuessed : guessed_too_high;
 high = numGuessed : guessed_too_low;
 
 //  the guessed_too_high and guessed_too_low events will be emitted every time the guess event is emitted
-evoke guessed_too_high ? numGuessed > secretNumber : guess;
-evoke guessed_too_low ? numGuessed < secretNumber : guess;
+emit guessed_too_high ? numGuessed > secretNumber : guess;
+emit guessed_too_low ? numGuessed < secretNumber : guess;
 
 //  updates numGuessed, numGuessed, AND low and high since their event
 //  (guessed_too_high and guessed_too_low are also subscribed to the guess event)
-evoke guess ?? numGuessed != secretNumber;
+emit guess ?? numGuessed != secretNumber;
 
 print numGuessed : done;
 print numGuesses : done;
-evoke done;
+emit done;
 ```
 
 # Initialization Order
