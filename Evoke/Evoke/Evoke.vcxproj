@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ASTPrinter.cpp" />
+    <ClCompile Include="environment.cpp" />
     <ClCompile Include="evoke.cpp" />
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="main.cpp" />
@@ -137,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ASTPrinter.h" />
+    <ClInclude Include="environment.h" />
     <ClInclude Include="errors.h" />
     <ClInclude Include="evoke.h" />
     <ClInclude Include="expr.h" />

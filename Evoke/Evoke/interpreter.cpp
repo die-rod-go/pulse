@@ -83,6 +83,11 @@ void Interpreter::visit(const LiteralExpr& expr) const
 	currentResult = expr.literal.literal.value;
 }
 
+void Interpreter::visit(const VariableExpr& expr) const
+{
+	currentResult = environment.get(expr.name);
+}
+
 void Interpreter::visit(const GroupingExpr& expr) const
 {
 	evaluate(*expr.expr);
@@ -104,4 +109,16 @@ void Interpreter::visit(const PrintStmt& stmt) const
 	evaluate(*stmt.expr);
 	byte value = currentResult;
 	std::cout << (int)value << std::endl;
+}
+
+void Interpreter::visit(const ByteStmt& stmt) const
+{
+	byte value = NULL;
+	if (stmt.initializer != nullptr)
+	{
+		evaluate(*stmt.initializer);
+		value = currentResult;
+	}
+
+	environment.define(stmt.name.lexeme, value);
 }

@@ -35,6 +35,8 @@ private:
 	bool match(std::initializer_list<TokenType> types);
 	bool check(TokenType type);
 
+	std::unique_ptr<Stmt> declaration();
+	std::unique_ptr<Stmt> varDeclaration();
 	std::unique_ptr<Stmt> statement();
 	std::unique_ptr<Stmt> printStatement();
 	std::unique_ptr<Stmt> expressionStatement();

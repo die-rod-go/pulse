@@ -4,6 +4,7 @@
 #include "errors.h"
 #include <iostream>
 #include "stmt.h"
+#include "environment.h"
 
 class Interpreter : public ExprVisitor, public StmtVisitor
 {
@@ -17,15 +18,17 @@ public:
 	void visit(const GroupingExpr& expr) const override;
 	void visit(const LiteralExpr& expr) const override;
 
-	void visit(const VariableExpr& expr) const override {};
+	void visit(const VariableExpr& expr) const override;
 	void visit(const AssignmentExpr& expr) const override {};
 	void visit(const EvokeExpr& expr) const override {};
 
 	//	stmts
 	void visit(const ExpressionStmt& stmt) const override;
 	void visit(const PrintStmt& stmt) const override;
+	void visit(const ByteStmt& stmt) const override;
 
 private:
 	void evaluate(const Expr& expr) const;
+	mutable Environment environment;
 	mutable byte currentResult;
 };

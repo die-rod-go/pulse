@@ -9,7 +9,7 @@ std::vector<std::unique_ptr<Stmt>> Parser::parse()
 	try {
 		while (!isAtEnd())
 		{
-			statements.push_back(statement());
+			statements.push_back(declaration());
 		}
 	}
 	catch (ParseError& error)
@@ -44,6 +44,35 @@ bool Parser::check(TokenType type)
 {
 	if (isAtEnd()) return false;
 	return peek().type == type;
+}
+
+std::unique_ptr<Stmt> Parser::declaration()
+{
+	try {
+		if (match({ BYTE })) return varDeclaration();
+		return statement();
+	}
+	catch (ParseError error)
+	{
+		Evoke::error(error.token, error.message);
+		synchronize();
+		return nullptr;
+	}
+}
+
+std::unique_ptr<Stmt> Parser::varDeclaration()
+{
+	Token name = consume(IDENTIFIER, "Expect variable name.");
+
+	std::unique_ptr<Expr> initializer = nullptr;
+	if (match({ EQUAL }))
+	{
+		initializer = expression();
+	}
+
+	consume(SEMICOLON, "Expect ';' after variable declaration");
+
+	return std::make_unique<ByteStmt>(name, std::move(initializer));
 }
 
 std::unique_ptr<Stmt> Parser::statement()
@@ -173,8 +202,8 @@ std::unique_ptr<Expr> Parser::primary()
 	if (match({ BYTE_LITERAL }))
 		return std::make_unique<LiteralExpr>(previous());
 
-	/*if (match({ IDENTIFIER }))
-		return std::make_unique<VariableExpr>(previous());*/
+	if (match({ IDENTIFIER }))
+		return std::make_unique<VariableExpr>(previous());
 
 	if (match({ LEFT_PAREN }))
 	{

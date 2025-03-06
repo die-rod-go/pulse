@@ -1,4 +1,5 @@
 #pragma once
+#include "token.h"
 class RuntimeError : public std::exception {
 public:
 	Token token;
