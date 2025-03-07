@@ -39,6 +39,31 @@ Note that EVERY statement must be tied to an event
 byte example; <- syntax error. expecting : and event name
 ```
 
+# Arrays
+Pulse supports dynamic arrays (also referred to as lists) which allow storing multiple values.
+
+*Declaration*
+```
+// Creates an empty array
+byte[] arr : event;
+```
+
+*Adding Elements*
+```
+// Pushes values into the array
+arr <- 3 : event;
+arr <- 4 : event;
+```
+
+*Accessing and Modifying Elements*
+```
+// Access an element
+byte x = arr[0] : event; // Gets the first element
+
+// Modify an element
+arr[1] = 5 : event; // Sets the second element to 5
+```
+
 # Events
 
 There's three ways to trigger events.
