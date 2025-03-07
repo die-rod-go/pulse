@@ -7,6 +7,7 @@ public:
 	virtual void visit(const class PrintStmt& stmt, bool evoked) const = 0;
 	virtual void visit(const class ExpressionStmt& stmt, bool evoked) const = 0;
 	virtual void visit(const class ByteStmt& stmt, bool evoked) const = 0;
+	virtual void visit(const class ArrayStmt& stmt, bool evoked) const = 0;
 	virtual void visit(const class EmitStmt& stmt, bool evoked) const = 0;
 };
 
@@ -68,6 +69,23 @@ public:
 		return std::make_unique<ByteStmt>(subscribedEvent, name, initializer ? initializer->clone() : nullptr);
 	}
 };
+
+class ArrayStmt : public Stmt {
+public:
+	Token subscribedEvent;
+	Token name;
+
+	ArrayStmt(Token subscribedEvent, Token name)
+		: subscribedEvent(subscribedEvent), name(name) {}
+
+	void accept(const StmtVisitor& visitor, bool evoked) const override {
+		visitor.visit(*this, evoked);
+	}
+	std::unique_ptr<Stmt> clone() const override {
+		return std::make_unique<ArrayStmt>(subscribedEvent, name);
+	}
+};
+
 
 class EmitStmt : public Stmt {
 public:

@@ -18,12 +18,17 @@ public:
 	void visit(const LiteralExpr& expr) const override;
 	void visit(const VariableExpr& expr) const override;
 	void visit(const AssignmentExpr& expr) const override;
+	void visit(const ArrayPushExpr& expr) const override;
+	void visit(const ArrayAccessExpr& expr) const override;
+	void visit(const ArraySetExpr& expr) const override;
 
 	//	stmts
 	void visit(const ExpressionStmt& stmt, bool evoked) const override;
 	void visit(const PrintStmt& stmt, bool evoked) const override;
 	void visit(const ByteStmt& stmt, bool evoked) const override;
+	void visit(const ArrayStmt& stmt, bool evoked) const override;
 	void visit(const EmitStmt& stmt, bool evoked) const override;
+
 	void emit(const EmitStmt& stmt) const;
 
 private:

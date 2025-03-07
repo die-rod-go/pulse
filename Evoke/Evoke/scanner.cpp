@@ -5,7 +5,8 @@ const std::unordered_map<std::string, TokenType> Scanner::keywords = {
 	{"emit", EMIT},
 	{"clear", CLEAR},
 	{"byte", BYTE},
-	{"print", PRINT}
+	{"print", PRINT},
+	{"[]", ARRAY}
 };
 
 Scanner::Scanner(std::string source) : source(source), start(0), current(0), line(1), currentOnLine(0) {}
@@ -39,6 +40,7 @@ void Scanner::scanToken()
 	case ')': addToken(RIGHT_PAREN, ByteLiteral()); break;
 	case '{': addToken(LEFT_BRACE, ByteLiteral()); break;
 	case '}': addToken(RIGHT_BRACE, ByteLiteral()); break;
+	case ']': addToken(RIGHT_BRACKET, ByteLiteral()); break;
 	case ',': addToken(COMMA, ByteLiteral()); break;
 	case '-': addToken(MINUS, ByteLiteral()); break;
 	case '+': addToken(PLUS, ByteLiteral()); break;
@@ -49,6 +51,9 @@ void Scanner::scanToken()
 
 		//	checks for tokens that could be single or part of 
 		//	double character lexemes ex: ! vs != and > and >=
+	case '[':
+		addToken(match(']') ? ARRAY : LEFT_BRACKET, ByteLiteral());
+		break;
 	case '!':
 		addToken(match('=') ? BANG_EQUAL : BANG, ByteLiteral());
 		break;
@@ -60,6 +65,8 @@ void Scanner::scanToken()
 			addToken(LESS_EQUAL, ByteLiteral());
 		else if (match('<'))
 			addToken(LESS_LESS, ByteLiteral());
+		else if (match('-'))
+			addToken(ARROW, ByteLiteral());
 		else
 			addToken(LESS, ByteLiteral());
 		break;
