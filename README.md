@@ -119,6 +119,10 @@ output:
 1
 ...
 ```
+```
+//  infinite loop
+emit event ?? 1;
+```
 
 # Print
 Does what it says on the tin.
