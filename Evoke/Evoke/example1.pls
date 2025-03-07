@@ -1,23 +1,27 @@
-byte secretNumber = 33 : init;
-byte numGuesses = 0 : init;
-byte low = 0 : init;
-byte high = 255 : init;
-byte numGuessed : init;
-emit init;
+byte[] arr : init_arr;
+arr <- 3  : init_arr;
+arr <- 10 : init_arr;
+arr <- 15 : init_arr;
+arr <- 20 : init_arr;
+arr <- 1  : init_arr;
+emit init_arr;
 
-numGuessed = (high + low) / 2 : guess;
-numGuesses = numGuesses + 1 : guess;
+byte inner = 0 : init_loop;
+byte outer = 5 : init_loop;
+emit init_loop;
 
-low = numGuessed : guessed_too_high;
-high = numGuessed : guessed_too_low;
+byte temp = arr[inner] : swap;
+arr[inner] = arr[inner + 1] : swap;
+arr[inner + 1] = temp : swap;
 
-emit guessed_too_high ? numGuessed > secretNumber : guess;
-emit guessed_too_low ? numGuessed < secretNumber : guess;
+inner = inner + 1 : increment_inner;
+outer = outer - 1 : decrement_outer;
 
-emit guess ?? numGuessed != secretNumber;
+inner = 0 : reset_inner;
+emit reset_inner ? inner >= outer : increment_inner;
 
-print numGuessed : done;
-print numGuesses : done;
-emit done;
-
+emit swap ? arr[inner] > arr[inner + 1] : loop;
+emit increment_inner : loop;
+emit decrement_outer : loop;
+emit loop ?? outer > 0;
 
