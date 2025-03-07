@@ -42,3 +42,54 @@ byte Environment::getVariable(Token name) const
 	throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
 	return byte();
 }
+
+void Environment::defineArray(const std::string& name)
+{
+	arrayMap[name] = std::vector<byte>();
+}
+
+void Environment::pushArray(Token name, byte value)
+{
+	if (arrayMap.find(name.lexeme) != arrayMap.end())
+	{
+		arrayMap[name.lexeme].push_back(value);
+		return;
+	}
+
+	throw RuntimeError(name, "Undefined array '" + name.lexeme + "'.");
+}
+
+void Environment::setArrayElement(Token name, int index, byte value)
+{
+	if (arrayMap.find(name.lexeme) != arrayMap.end())
+	{
+		if (index >= 0 && index < arrayMap[name.lexeme].size())
+		{
+			arrayMap[name.lexeme][index] = value;
+			return;
+		}
+		else
+		{
+			throw RuntimeError(name, "Index out of bounds for array '" + name.lexeme + "'.");
+		}
+	}
+
+	throw RuntimeError(name, "Undefined array '" + name.lexeme + "'.");
+}
+
+byte Environment::getArrayElement(Token name, int index)
+{
+	if (arrayMap.find(name.lexeme) != arrayMap.end())
+	{
+		if (index >= 0 && index < arrayMap[name.lexeme].size())
+		{
+			return arrayMap[name.lexeme][index];;
+		}
+		else
+		{
+			throw RuntimeError(name, "Index out of bounds for array '" + name.lexeme + "'.");
+		}
+	}
+
+	throw RuntimeError(name, "Undefined array '" + name.lexeme + "'.");
+}

@@ -23,7 +23,13 @@ std::vector<std::unique_ptr<Stmt>> Parser::parse()
 std::unique_ptr<Stmt> Parser::declaration()
 {
 	try {
-		if (match({ BYTE })) return varDeclaration();
+		if (match({ BYTE }))
+		{
+			if (match({ ARRAY }))
+				return arrDeclaration();
+			else
+				return varDeclaration();
+		}
 		return statement();
 	}
 	catch (ParseError error)
@@ -49,6 +55,15 @@ std::unique_ptr<Stmt> Parser::varDeclaration()
 	consume(SEMICOLON, "Expect ';' after variable declaration");
 
 	return std::make_unique<ByteStmt>(subscribedEvent, name, std::move(initializer));
+}
+
+std::unique_ptr<Stmt> Parser::arrDeclaration()
+{
+	Token name = consume(IDENTIFIER, "Expect array name.");
+	consume(COLON, "Expect ':' after array declaration.");
+	Token subscribedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
+	consume(SEMICOLON, "Expect ';' after variable declaration");
+	return std::make_unique<ArrayStmt>(subscribedEvent, name);
 }
 
 std::unique_ptr<Stmt> Parser::statement()
@@ -109,15 +124,33 @@ std::unique_ptr<Expr> Parser::assignment()
 {
 	std::unique_ptr<Expr> expr = equality();
 
+	if (match({ ARROW }))
+	{
+		Token arrow = previous();
+		std::unique_ptr<Expr> value = assignment();
+		if (VariableExpr* variable = dynamic_cast<VariableExpr*>(expr.get()))
+		{
+			Token name = variable->name;
+			return std::make_unique<ArrayPushExpr>(name, std::move(value));
+		}
+	}
+
 	if (match({ EQUAL }))
 	{
 		Token equals = previous();
 		std::unique_ptr<Expr> value = assignment();
 
-		//	instanceof (dirty idc)
-		if (VariableExpr* v = dynamic_cast<VariableExpr*>(expr.get()))
+		if (ArrayAccessExpr* arrayAccess = dynamic_cast<ArrayAccessExpr*>(expr.get()))
 		{
-			Token name = v->name;
+			Token name = arrayAccess->name;
+			std::unique_ptr<Expr> index = std::move(arrayAccess->index);
+			return std::make_unique<ArraySetExpr>(name, std::move(index), std::move(value));
+		}
+
+		//	instanceof (dirty idc)
+		if (VariableExpr* variable = dynamic_cast<VariableExpr*>(expr.get()))
+		{
+			Token name = variable->name;
 			return std::make_unique<AssignmentExpr>(name, std::move(value));
 		}
 
@@ -200,7 +233,16 @@ std::unique_ptr<Expr> Parser::primary()
 		return std::make_unique<LiteralExpr>(previous());
 
 	if (match({ IDENTIFIER }))
+	{
+		Token name = previous();
+		if (match({ LEFT_BRACKET }))
+		{
+			std::unique_ptr<Expr> index = expression();
+			consume(RIGHT_BRACKET, "Expect ']' after array index.");
+			return std::make_unique<ArrayAccessExpr>(name, std::move(index));
+		}
 		return std::make_unique<VariableExpr>(previous());
+	}
 
 	if (match({ LEFT_PAREN }))
 	{

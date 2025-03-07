@@ -101,6 +101,29 @@ void Interpreter::visit(const AssignmentExpr& expr) const
 	currentResult = value;
 }
 
+void Interpreter::visit(const ArrayPushExpr& expr) const
+{
+	evaluate(*expr.value);
+	int index = static_cast<int>(currentResult);
+	environment.pushArray(expr.name, index);
+}
+
+void Interpreter::visit(const ArrayAccessExpr& expr) const
+{
+	evaluate(*expr.index);
+	int index = static_cast<int>(currentResult);
+	currentResult = environment.getArrayElement(expr.name, index);
+}
+
+void Interpreter::visit(const ArraySetExpr& expr) const
+{
+	evaluate(*expr.index);
+	int index = static_cast<int>(currentResult);
+	evaluate(*expr.value);
+	byte value = currentResult;
+	environment.setArrayElement(expr.name, index, value);
+}
+
 void Interpreter::visit(const GroupingExpr& expr) const
 {
 	evaluate(*expr.expr);
@@ -143,6 +166,18 @@ void Interpreter::visit(const ByteStmt& stmt, bool evoked) const
 		}
 
 		environment.defineVariable(stmt.name.lexeme, value);
+	}
+	else
+	{
+		environment.subscribe(stmt.subscribedEvent.lexeme, stmt.clone());
+	}
+}
+
+void Interpreter::visit(const ArrayStmt& stmt, bool evoked) const
+{
+	if (evoked)
+	{
+		environment.defineArray(stmt.name.lexeme);
 	}
 	else
 	{

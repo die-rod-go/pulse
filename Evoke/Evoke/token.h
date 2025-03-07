@@ -7,6 +7,7 @@ enum TokenType {
 	// Single-character tokens.
 	LEFT_PAREN, RIGHT_PAREN, // ( )
 	LEFT_BRACE, RIGHT_BRACE, // { }
+	LEFT_BRACKET, RIGHT_BRACKET,
 	COMMA, MINUS, PLUS, STAR, PERCENT,// , - + * % 
 	SLASH, COLON, SEMICOLON, // / : ;
 
@@ -15,6 +16,7 @@ enum TokenType {
 	EQUAL, EQUAL_EQUAL, // = ==
 	GREATER, GREATER_EQUAL, GREATER_GREATER, // > >= >>
 	LESS, LESS_EQUAL, LESS_LESS, // < <= <<
+	ARROW, // <-
 	AND, AND_AND,
 	PIPE, PIPE_PIPE,
 	QUESTION, QUESTION_QUESTION, // ? ??
@@ -23,7 +25,7 @@ enum TokenType {
 	IDENTIFIER, BYTE_LITERAL,
 
 	// Keywords.
-	EMIT, CLEAR, BYTE, PRINT,
+	EMIT, CLEAR, BYTE, ARRAY, PRINT,
 
 	END_OF_FILE,
 

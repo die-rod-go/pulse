@@ -29,6 +29,7 @@ private:
 	int current = 0;
 	std::unique_ptr<Stmt> declaration();
 	std::unique_ptr<Stmt> varDeclaration();
+	std::unique_ptr<Stmt> arrDeclaration();
 	std::unique_ptr<Stmt> statement();
 	std::unique_ptr<Stmt> printStatement();
 	std::unique_ptr<Stmt> expressionStatement();

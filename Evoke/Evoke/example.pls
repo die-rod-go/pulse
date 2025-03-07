@@ -1,19 +1,26 @@
-byte n = 255 : init; // Number of Fibonacci numbers to generate
-byte a = 0 : init;
-byte b = 1 : init;
-byte count = 0 : init;
-emit init;
+//	initialize the list
+byte[] list : init_list;
+list <- 0	: init_list;
+list <- 7	: init_list;
+list <- 2	: init_list;
+list <- 5	: init_list;
+list <- 11	: init_list;
+list <- 9	: init_list;
+list <- 10  : init_list;
+byte listSize = 7 : init_list;
+emit init_list;
 
-// Print the current Fibonacci number
-print a : fibonacci_loop;
+//	initialize loop variables
+byte currLargest = list[0] : init_loop_variables;
+byte index = 0		 : init_loop_variables;
+emit init_loop_variables;
 
-// Calculate the next Fibonacci number
-byte next = a + b : fibonacci_loop;
-a = b : fibonacci_loop;
-b = next : fibonacci_loop;
+//	compare elements and find the largest
+index = index + 1 : check_next_element;
+currLargest = list[index] : found_larger;
+emit found_larger ? list[index] > currLargest : check_next_element;
+emit check_next_element ?? index < listSize - 1;
 
-// Increment the counter
-count = count + 1 : fibonacci_loop;
-
-// Emit fibonacci_loop until count >= n
-emit fibonacci_loop ?? count < n;
+//	print the largest element
+print currLargest : print_largest;
+emit print_largest;

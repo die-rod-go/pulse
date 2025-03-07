@@ -11,6 +11,9 @@ public:
 	virtual void visit(const class LiteralExpr& expr) const = 0;
 	virtual void visit(const class VariableExpr& expr) const = 0;
 	virtual void visit(const class AssignmentExpr& expr) const = 0;
+	virtual void visit(const class ArrayPushExpr& expr) const = 0;
+	virtual void visit(const class ArrayAccessExpr& expr) const = 0;
+	virtual void visit(const class ArraySetExpr& expr) const = 0;
 };
 
 class Expr
@@ -123,5 +126,58 @@ public:
 
 	std::unique_ptr<Expr> clone() const override {
 		return std::make_unique<AssignmentExpr>(name, value ? value->clone() : nullptr);
+	}
+};
+
+class ArrayPushExpr : public Expr {
+public:
+	Token name;
+	std::unique_ptr<Expr> value;
+	ArrayPushExpr(Token name, std::unique_ptr<Expr> value)
+		: name(name), value(std::move(value)) {}
+
+	void accept(const ExprVisitor& visitor) const override
+	{
+		visitor.visit(*this);
+	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<ArrayPushExpr>(name, value ? value->clone() : nullptr);
+	}
+};
+
+class ArrayAccessExpr : public Expr {
+public:
+	Token name;
+	std::unique_ptr<Expr> index;
+	ArrayAccessExpr(Token name, std::unique_ptr<Expr> index)
+		: name(name), index(std::move(index)) {}
+
+	void accept(const ExprVisitor& visitor) const override
+	{
+		visitor.visit(*this);
+	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<ArrayAccessExpr>(name, index ? index->clone() : nullptr);
+	}
+};
+
+class ArraySetExpr : public Expr {
+public:
+	Token name;
+	std::unique_ptr<Expr> index;
+	std::unique_ptr<Expr> value;
+
+	ArraySetExpr(Token name, std::unique_ptr<Expr> index, std::unique_ptr<Expr> value)
+		: name(name), index(std::move(index)), value(std::move(value)) {}
+
+	void accept(const ExprVisitor& visitor) const override
+	{
+		visitor.visit(*this);
+	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<ArraySetExpr>(name, index ? index->clone() : nullptr, value ? value->clone() : nullptr);
 	}
 };
