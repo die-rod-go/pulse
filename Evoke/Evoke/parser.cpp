@@ -94,7 +94,7 @@ std::unique_ptr<Stmt> Parser::expressionStatement()
 
 std::unique_ptr<Stmt> Parser::evokeStatement()
 {
-	Token eventName = consume(IDENTIFIER, "Expect event name after 'Pulse'.");
+	Token eventName = consume(IDENTIFIER, "Expect event name after 'emit'.");
 	std::unique_ptr<Expr> condition = nullptr;
 
 	Token op;
@@ -110,7 +110,7 @@ std::unique_ptr<Stmt> Parser::evokeStatement()
 		subscribedEvent = consume(IDENTIFIER, "Expect event name after ':'.");
 	}
 
-	consume(SEMICOLON, "Expect ';' after Pulse statement.");
+	consume(SEMICOLON, "Expect ';' after emit statement.");
 
 	return std::make_unique<EmitStmt>(eventName, subscribedEvent, op, std::move(condition));
 }
