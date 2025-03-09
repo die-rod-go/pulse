@@ -23,7 +23,7 @@ std::vector<std::unique_ptr<Stmt>> Parser::parse()
 std::unique_ptr<Stmt> Parser::declaration()
 {
 	try {
-		if (match({ BYTE }))
+		if (match({ VAR }))
 		{
 			if (match({ ARRAY }))
 				return arrDeclaration();
@@ -229,7 +229,7 @@ std::unique_ptr<Expr> Parser::unary()
 
 std::unique_ptr<Expr> Parser::primary()
 {
-	if (match({ BYTE_LITERAL }))
+	if (match({ BYTE_LITERAL, STRING_LITERAL }))
 		return std::make_unique<LiteralExpr>(previous());
 
 	if (match({ IDENTIFIER }))

@@ -1,11 +1,11 @@
 #include "environment.h"
 
-void Environment::defineVariable(const std::string& name, byte value)
+void Environment::defineVariable(const std::string& name, Value value)
 {
 	values[name] = value;
 }
 
-void Environment::assignVariable(Token name, byte value)
+void Environment::assignVariable(Token name, Value value)
 {
 	if (values.find(name.lexeme) != values.end())
 	{
@@ -33,7 +33,7 @@ const std::vector<std::unique_ptr<Stmt>>& Environment::getSubscribedStatements(c
 	return emptyList;
 }
 
-byte Environment::getVariable(Token name) const
+Value Environment::getVariable(Token name) const
 {
 	if (values.find(name.lexeme) != values.end())
 	{
@@ -45,10 +45,10 @@ byte Environment::getVariable(Token name) const
 
 void Environment::defineArray(const std::string& name)
 {
-	arrayMap[name] = std::vector<byte>();
+	arrayMap[name] = std::vector<Value>();
 }
 
-void Environment::pushArray(Token name, byte value)
+void Environment::pushArray(Token name, Value value)
 {
 	if (arrayMap.find(name.lexeme) != arrayMap.end())
 	{
@@ -59,7 +59,7 @@ void Environment::pushArray(Token name, byte value)
 	throw RuntimeError(name, "Undefined array '" + name.lexeme + "'.");
 }
 
-void Environment::setArrayElement(Token name, int index, byte value)
+void Environment::setArrayElement(Token name, int index, Value value)
 {
 	if (arrayMap.find(name.lexeme) != arrayMap.end())
 	{
@@ -77,7 +77,7 @@ void Environment::setArrayElement(Token name, int index, byte value)
 	throw RuntimeError(name, "Undefined array '" + name.lexeme + "'.");
 }
 
-byte Environment::getArrayElement(Token name, int index)
+Value Environment::getArrayElement(Token name, int index)
 {
 	if (arrayMap.find(name.lexeme) != arrayMap.end())
 	{

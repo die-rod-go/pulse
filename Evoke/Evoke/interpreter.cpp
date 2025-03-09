@@ -23,12 +23,13 @@ void Interpreter::execute(const Stmt& stmt, bool evoked) const
 void Interpreter::visit(const UnaryExpr& expr) const
 {
 	evaluate(*expr.operand);
-	byte right = currentResult;
+	Value right = currentResult;
 
 	switch (expr.op.type)
 	{
 	case (BANG):
-		currentResult = ~right;
+		checkNumberOperand(expr.op, right);
+		currentResult = Value(~right.getByte());
 		break;
 	}
 }
@@ -36,56 +37,68 @@ void Interpreter::visit(const UnaryExpr& expr) const
 void Interpreter::visit(const BinaryExpr& expr) const
 {
 	evaluate(*expr.left);
-	byte left = currentResult;
+	Value left = currentResult;
 
 	evaluate(*expr.right);
-	byte right = currentResult;
+	Value right = currentResult;
+
+	if (left.getType() != right.getType())
+		throw::RuntimeError(expr.op, "Type mismatch. Types must match");
 
 	switch (expr.op.type)
 	{
 	case MINUS:
-		currentResult = left - right;
+		checkNumberOperands(expr.op, left, right);
+		currentResult = Value(left.getByte() - right.getByte());
 		break;
 	case SLASH:
-		if (right == 0)
+		checkNumberOperands(expr.op, left, right);
+		if (right.getByte() == 0)
 			throw RuntimeError(expr.op, "Division by zero.");
-		currentResult = left / right;
+		currentResult = Value(left.getByte() / right.getByte());
 		break;
 	case STAR:
-		currentResult = left * right;
+		checkNumberOperands(expr.op, left, right);
+		currentResult = Value(left.getByte() * right.getByte());
 		break;
 	case PERCENT:
-		if (right == 0)
-			throw RuntimeError(expr.op, "Division by zero");
-		currentResult = left % right;
+		checkNumberOperands(expr.op, left, right);
+		if (right.getByte() == 0)
+			throw RuntimeError(expr.op, "Division by zero.");
+		currentResult = Value(left.getByte() % right.getByte());
 		break;
 	case PLUS:
-		currentResult = left + right;
+		currentResult = addValues(left, right);
 		break;
 	case GREATER:
-		currentResult = left > right;
+		checkNumberOperands(expr.op, left, right);
+		currentResult = Value(left.getByte() > right.getByte());
 		break;
 	case GREATER_EQUAL:
-		currentResult = left >= right;
+		checkNumberOperands(expr.op, left, right);
+		currentResult = Value(left.getByte() >= right.getByte());
 		break;
 	case LESS:
-		currentResult = left < right;
+		checkNumberOperands(expr.op, left, right);
+		currentResult = Value(left.getByte() < right.getByte());
 		break;
 	case LESS_EQUAL:
-		currentResult = left <= right;
+		checkNumberOperands(expr.op, left, right);
+		currentResult = Value(left.getByte() <= right.getByte());
 		break;
 	case BANG_EQUAL:
-		currentResult = left != right;
+		checkNumberOperands(expr.op, left, right);
+		currentResult = Value(left.getByte() != right.getByte());
 		break;
 	case EQUAL_EQUAL:
-		currentResult = left == right;
+		currentResult = areValuesEqual(left, right);
 		break;
 	}
 }
 
 void Interpreter::visit(const LiteralExpr& expr) const
 {
-	currentResult = expr.literal.literal.value;
+	currentResult = expr.literal.literal;
 }
 
 void Interpreter::visit(const VariableExpr& expr) const
@@ -96,7 +109,7 @@ void Interpreter::visit(const VariableExpr& expr) const
 void Interpreter::visit(const AssignmentExpr& expr) const
 {
 	evaluate(*expr.value);
-	byte value = currentResult;
+	Value value = currentResult;
 	environment.assignVariable(expr.name, value);
 	currentResult = value;
 }
@@ -104,23 +117,24 @@ void Interpreter::visit(const AssignmentExpr& expr) const
 void Interpreter::visit(const ArrayPushExpr& expr) const
 {
 	evaluate(*expr.value);
-	int index = static_cast<int>(currentResult);
-	environment.pushArray(expr.name, index);
+	environment.pushArray(expr.name, currentResult);
 }
 
 void Interpreter::visit(const ArrayAccessExpr& expr) const
 {
 	evaluate(*expr.index);
-	int index = static_cast<int>(currentResult);
+	checkNumberOperand(expr.name, currentResult);
+	int index = static_cast<int>(currentResult.getByte());
 	currentResult = environment.getArrayElement(expr.name, index);
 }
 
 void Interpreter::visit(const ArraySetExpr& expr) const
 {
 	evaluate(*expr.index);
-	int index = static_cast<int>(currentResult);
+	checkNumberOperand(expr.name, currentResult);
+	int index = static_cast<int>(currentResult.getByte());
 	evaluate(*expr.value);
-	byte value = currentResult;
+	Value value = currentResult;
 	environment.setArrayElement(expr.name, index, value);
 }
 
@@ -145,8 +159,8 @@ void Interpreter::visit(const PrintStmt& stmt, bool evoked) const
 	if (evoked)
 	{
 		evaluate(*stmt.expr);
-		byte value = currentResult;
-		std::cout << (int)value << std::endl;
+		Value value = currentResult;
+		std::cout << value.toString() << std::endl;
 	}
 	else
 	{
@@ -158,7 +172,7 @@ void Interpreter::visit(const ByteStmt& stmt, bool evoked) const
 {
 	if (evoked)
 	{
-		byte value = NULL;
+		Value value;
 		if (stmt.initializer != nullptr)
 		{
 			evaluate(*stmt.initializer);
@@ -207,7 +221,8 @@ void Interpreter::emit(const EmitStmt& stmt) const
 	if (stmt.condition != nullptr)
 	{
 		evaluate(*stmt.condition);
-		bool shouldTrigger = currentResult != 0;
+		Value is_true(1);
+		bool shouldTrigger = areValuesEqual(currentResult,  is_true);
 		if (shouldTrigger)
 		{
 			if (stmt.op.type == QUESTION)
@@ -220,7 +235,7 @@ void Interpreter::emit(const EmitStmt& stmt) const
 				{
 					triggerEvent(stmt.eventName.lexeme);
 					evaluate(*stmt.condition);
-					shouldTrigger = currentResult != 0;
+					shouldTrigger = areValuesEqual(currentResult, is_true);
 				}
 			}
 		}
@@ -234,6 +249,39 @@ void Interpreter::emit(const EmitStmt& stmt) const
 void Interpreter::evaluate(const Expr& expr) const
 {
 	expr.accept(*this);
+}
+
+void Interpreter::checkNumberOperand(Token op, Value operand) const
+{
+	if (operand.getType() == Type::BYTE)
+		return;
+	throw RuntimeError(op, "Operand must be a number");
+}
+
+void Interpreter::checkNumberOperands(Token op, Value left, Value right) const
+{
+	if (left.getType() == Type::BYTE && right.getType() == Type::BYTE)
+		return;
+	throw RuntimeError(op, "Operands must be numbers.");
+}
+
+bool Interpreter::areValuesEqual(Value left, Value right) const
+{
+	if (left.getType() != right.getType())
+		throw::RuntimeError(Token(), "Type mismatch. Types must match");
+
+	if (left.getType() == Type::BYTE)
+		return left.getByte() == right.getByte();
+	return left.getString() == right.getString();
+}
+
+Value Interpreter::addValues(Value left, Value right) const
+{
+	if (left.getType() != right.getType())
+		throw::RuntimeError(Token(), "Type mismatch. Types must match");
+	if (left.getType() == Type::BYTE)
+		return Value(left.getByte() + right.getByte());
+	return Value(left.getString() + right.getString());
 }
 
 void Interpreter::triggerEvent(const std::string& eventName) const

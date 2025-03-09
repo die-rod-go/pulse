@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include "types.h"
+#include "value.h"
 
 enum TokenType {
 	// Single-character tokens.
@@ -22,32 +23,23 @@ enum TokenType {
 	QUESTION, QUESTION_QUESTION, // ? ??
 
 	// Literals.
-	IDENTIFIER, BYTE_LITERAL,
+	IDENTIFIER, BYTE_LITERAL, STRING_LITERAL,
 
 	// Keywords.
-	EMIT, CLEAR, BYTE, ARRAY, PRINT,
+	EMIT, CLEAR, VAR, ARRAY, PRINT,
 
 	END_OF_FILE,
 
 	NONE
 };
 
-class ByteLiteral {
-public:
-	bool isNull;
-	byte value;
-
-	ByteLiteral() : value(0b00000000), isNull(true) {}
-	ByteLiteral(byte value) : value(value), isNull(false) {}
-};
-
 class Token {
 public:
 	Token();
-	Token(TokenType type, const std::string& lexeme, ByteLiteral literal, int line);
+	Token(TokenType type, const std::string& lexeme, Value literal, int line);
 	TokenType type;
 	std::string lexeme;
-	ByteLiteral literal;
+	Value literal;
 	int line;
 	static const std::unordered_map<TokenType, std::string> enumStrings;
 	std::string toString() const;
