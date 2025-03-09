@@ -73,7 +73,7 @@ void Pulse::run(std::string source)
 {
 	Scanner scanner(source);
 	std::vector<Token> tokens = scanner.scanTokens();
-	//	scanner.printResult();
+	//scanner.printResult();
 
 	Parser parser(tokens);
 	std::vector<std::unique_ptr<Stmt>> statements = parser.parse();

@@ -4,7 +4,7 @@
 const std::unordered_map<std::string, TokenType> Scanner::keywords = {
 	{"emit", EMIT},
 	{"clear", CLEAR},
-	{"byte", BYTE},
+	{"var", VAR},
 	{"print", PRINT},
 	{"[]", ARRAY}
 };
@@ -20,7 +20,7 @@ std::vector<Token> Scanner::scanTokens()
 		scanToken();
 	}
 
-	tokens.push_back(Token(END_OF_FILE, "", ByteLiteral(), line));
+	tokens.push_back(Token(END_OF_FILE, "", Value(), line));
 	return tokens;
 }
 
@@ -36,56 +36,56 @@ void Scanner::scanToken()
 	char c = advance();
 	switch (c) {
 		//	single character tokens
-	case '(': addToken(LEFT_PAREN, ByteLiteral()); break;
-	case ')': addToken(RIGHT_PAREN, ByteLiteral()); break;
-	case '{': addToken(LEFT_BRACE, ByteLiteral()); break;
-	case '}': addToken(RIGHT_BRACE, ByteLiteral()); break;
-	case ']': addToken(RIGHT_BRACKET, ByteLiteral()); break;
-	case ',': addToken(COMMA, ByteLiteral()); break;
-	case '-': addToken(MINUS, ByteLiteral()); break;
-	case '+': addToken(PLUS, ByteLiteral()); break;
-	case '*': addToken(STAR, ByteLiteral()); break;
-	case '%': addToken(PERCENT, ByteLiteral()); break;
-	case ':': addToken(COLON, ByteLiteral()); break;
-	case ';': addToken(SEMICOLON, ByteLiteral()); break;
+	case '(': addToken(LEFT_PAREN, Value()); break;
+	case ')': addToken(RIGHT_PAREN, Value()); break;
+	case '{': addToken(LEFT_BRACE, Value()); break;
+	case '}': addToken(RIGHT_BRACE, Value()); break;
+	case ']': addToken(RIGHT_BRACKET, Value()); break;
+	case ',': addToken(COMMA, Value()); break;
+	case '-': addToken(MINUS, Value()); break;
+	case '+': addToken(PLUS, Value()); break;
+	case '*': addToken(STAR, Value()); break;
+	case '%': addToken(PERCENT, Value()); break;
+	case ':': addToken(COLON, Value()); break;
+	case ';': addToken(SEMICOLON, Value()); break;
 
 		//	checks for tokens that could be single or part of 
 		//	double character lexemes ex: ! vs != and > and >=
 	case '[':
-		addToken(match(']') ? ARRAY : LEFT_BRACKET, ByteLiteral());
+		addToken(match(']') ? ARRAY : LEFT_BRACKET, Value());
 		break;
 	case '!':
-		addToken(match('=') ? BANG_EQUAL : BANG, ByteLiteral());
+		addToken(match('=') ? BANG_EQUAL : BANG, Value());
 		break;
 	case '=':
-		addToken(match('=') ? EQUAL_EQUAL : EQUAL, ByteLiteral());
+		addToken(match('=') ? EQUAL_EQUAL : EQUAL, Value());
 		break;
 	case '<':
 		if (match('='))
-			addToken(LESS_EQUAL, ByteLiteral());
+			addToken(LESS_EQUAL, Value());
 		else if (match('<'))
-			addToken(LESS_LESS, ByteLiteral());
+			addToken(LESS_LESS, Value());
 		else if (match('-'))
-			addToken(ARROW, ByteLiteral());
+			addToken(ARROW, Value());
 		else
-			addToken(LESS, ByteLiteral());
+			addToken(LESS, Value());
 		break;
 	case '>':
 		if (match('='))
-			addToken(GREATER_EQUAL, ByteLiteral());
+			addToken(GREATER_EQUAL, Value());
 		else if (match('>>'))
-			addToken(GREATER_GREATER, ByteLiteral());
+			addToken(GREATER_GREATER, Value());
 		else
-			addToken(GREATER, ByteLiteral());
+			addToken(GREATER, Value());
 		break;
 	case '&':
-		addToken(match('&') ? AND_AND : AND, ByteLiteral());
+		addToken(match('&') ? AND_AND : AND, Value());
 		break;
 	case '|':
-		addToken(match('|') ? PIPE_PIPE : PIPE, ByteLiteral());
+		addToken(match('|') ? PIPE_PIPE : PIPE, Value());
 		break;
 	case '?':
-		addToken(match('?') ? QUESTION_QUESTION : QUESTION, ByteLiteral());
+		addToken(match('?') ? QUESTION_QUESTION : QUESTION, Value());
 		break;
 
 		//	checks for comments "//" and consumes the whole line
@@ -96,7 +96,7 @@ void Scanner::scanToken()
 				advance();
 		}
 		else {
-			addToken(SLASH, ByteLiteral());
+			addToken(SLASH, Value());
 		}
 		break;
 
@@ -110,18 +110,19 @@ void Scanner::scanToken()
 		line++;
 		currentOnLine = 1;
 		break;
+		break;
+	case '"':
+		handleString(); break;
 	case '0':
 		if (match('b'))
 		{
-			byteLiteral();
-			break;
+			handleByteLiteral();
 		}
-
 	default:
 		if (isdigit(c))
 			handleDigit();
 		else if (isalpha(c) || c == '_')
-			identifier();
+			handleIdentifier();
 		else
 			Pulse::error(line, "Unexpected character: '" + std::string(1, c) + "'" + "at: " + std::to_string(currentOnLine));
 	}
@@ -133,7 +134,7 @@ char Scanner::advance()
 	return source[current++];
 }
 
-void Scanner::addToken(TokenType type, ByteLiteral literal)
+void Scanner::addToken(TokenType type, Value literal)
 {
 	int length = getLength(start, current);
 	std::string text = source.substr(start, length);
@@ -167,7 +168,7 @@ char Scanner::peekNext()
 	return source[current + 1];
 }
 
-void Scanner::byteLiteral()
+void Scanner::handleByteLiteral()
 {
 	//	skip the 0b. only used to calculate the literal value, not the lexeme
 	int bitStart = start + 2;
@@ -188,8 +189,8 @@ void Scanner::byteLiteral()
 	std::string bitString = source.substr(bitStart, bitLength);
 
 	//	convert and add the byte literal
-	byte literal = binaryStringToByte(bitString);
-	addToken(BYTE_LITERAL, ByteLiteral(literal));
+	Value literal = binaryStringToValue(bitString);
+	addToken(BYTE_LITERAL, literal);
 }
 
 void Scanner::handleDigit()
@@ -201,19 +202,19 @@ void Scanner::handleDigit()
 	//	extract num as string
 	std::string numString = source.substr(start, numLength);
 	byte numAsByte = std::stoi(numString);
-	addToken(BYTE_LITERAL, ByteLiteral(numAsByte));
+	addToken(BYTE_LITERAL, Value(numAsByte));
 }
 
-byte Scanner::binaryStringToByte(const std::string& binaryString)
+Value Scanner::binaryStringToValue(const std::string& binaryString)
 {
 	if (binaryString.length() != 8) {
 		Pulse::error(line, "Invalid byte literal. Expected 8 bits, got: " + std::to_string(binaryString.length()));
 		return 0;
 	}
-	return static_cast<byte>(std::bitset<8>(binaryString).to_ulong());
+	return Value(static_cast<byte>(std::bitset<8>(binaryString).to_ulong()));
 }
 
-void Scanner::identifier()
+void Scanner::handleIdentifier()
 {
 	while (isalnum(peek()) || peek() == '_')
 		advance();
@@ -228,7 +229,34 @@ void Scanner::identifier()
 	else
 		type = IDENTIFIER;
 
-	addToken(type, ByteLiteral());
+	addToken(type, Value());
+}
+
+// scanner.cpp
+void Scanner::handleString() {
+	while (peek() != '"' && !isAtEnd()) 
+	{
+		if (peek() == '\n') 
+		{
+			line++;
+			currentOnLine = 1;
+		}
+		advance();
+	}
+
+	if (isAtEnd()) 
+	{
+		Pulse::error(line, "Unterminated string");
+		return;
+	}
+
+	//	the closing "
+	advance();
+
+	//	trim the surrounding quotes
+	int length = getLength(start + 1, current - 1);
+	std::string value = source.substr(start + 1, length);
+	addToken(STRING_LITERAL, Value(value));
 }
 
 int Scanner::getLength(int start, int current)

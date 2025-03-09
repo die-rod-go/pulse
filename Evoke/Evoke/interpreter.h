@@ -1,10 +1,11 @@
 #pragma once
+#include <iostream>
 #include "expr.h"
 #include "types.h"
 #include "errors.h"
-#include <iostream>
 #include "stmt.h"
 #include "environment.h"
+#include "value.h"
 
 class Interpreter : public ExprVisitor, public StmtVisitor
 {
@@ -34,7 +35,11 @@ public:
 private:
 	void execute(const Stmt& stmt, bool evoked) const;
 	void evaluate(const Expr& expr) const;
+	void checkNumberOperand(Token op, Value operand) const;
+	void checkNumberOperands(Token op, Value left, Value right) const;
+	bool areValuesEqual(Value left, Value right) const;
+	Value addValues(Value left, Value right) const;
 	void triggerEvent(const std::string& eventName) const;
 	mutable Environment environment;
-	mutable byte currentResult;
+	mutable Value currentResult;
 };

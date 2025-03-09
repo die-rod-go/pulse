@@ -4,6 +4,7 @@
 #include <string>
 #include "token.h"
 #include "pulse.h"
+#include "value.h"
 
 
 class Scanner
@@ -27,15 +28,17 @@ private:
 	bool isAtEnd();
 	void scanToken();
 	char advance();
-	void addToken(TokenType type, ByteLiteral literal);
+	void addToken(TokenType type, Value literal);
 	bool match(char expected);	//	checks if two characters are equal, advances if they are
 	char peek();
 	char peekNext();
 
 	void handleDigit();
-	void byteLiteral();
-	byte binaryStringToByte(const std::string& binaryString);
-	void identifier();
+	void handleByteLiteral();
+	void handleIdentifier();
+	void handleString();
+
+	Value binaryStringToValue(const std::string& binaryString);
 
 	int getLength(int start, int current);
 
