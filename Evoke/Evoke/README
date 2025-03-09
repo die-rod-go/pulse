@@ -1,1 +1,0 @@
-Evoke (Evo) is a strictly event-driven programming language where every statement and expression is triggered by an event. Execution follows a deterministic order based entirely on event subscription.

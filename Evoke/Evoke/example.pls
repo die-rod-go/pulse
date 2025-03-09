@@ -23,4 +23,4 @@ emit check_next_element ?? index < listSize - 1;
 
 //	print the largest element
 print currLargest : print_largest;
-emit print_largest
+emit print_largest;
