@@ -42,9 +42,6 @@ void Interpreter::visit(const BinaryExpr& expr) const
 	evaluate(*expr.right);
 	Value right = currentResult;
 
-	if (left.getType() != right.getType())
-		throw::RuntimeError(expr.op, "Type mismatch. Types must match");
-
 	switch (expr.op.type)
 	{
 	case MINUS:
@@ -268,7 +265,7 @@ void Interpreter::checkNumberOperands(Token op, Value left, Value right) const
 bool Interpreter::areValuesEqual(Value left, Value right) const
 {
 	if (left.getType() != right.getType())
-		throw::RuntimeError(Token(), "Type mismatch. Types must match");
+		return false;
 
 	if (left.getType() == Type::BYTE)
 		return left.getByte() == right.getByte();
@@ -278,7 +275,7 @@ bool Interpreter::areValuesEqual(Value left, Value right) const
 Value Interpreter::addValues(Value left, Value right) const
 {
 	if (left.getType() != right.getType())
-		throw::RuntimeError(Token(), "Type mismatch. Types must match");
+		throw::RuntimeError(Token(), "Type mismatch. Types must match.");
 	if (left.getType() == Type::BYTE)
 		return Value(left.getByte() + right.getByte());
 	return Value(left.getString() + right.getString());

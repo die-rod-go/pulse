@@ -313,6 +313,7 @@ void Parser::synchronize()
 		if (previous().type == SEMICOLON) return;
 		switch (peek().type)
 		{
+		case VAR:
 		case EMIT:
 		case CLEAR:
 		case IDENTIFIER:
