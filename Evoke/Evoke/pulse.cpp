@@ -58,7 +58,9 @@ void Pulse::runPrompt()
 	while (true)
 	{
 		//	get input from user
-		std::cin >> line;
+		std::cout << ">";
+		std::getline(std::cin, line);
+
 		if (line == "")
 			break;	//	quit if no input
 		//	run input

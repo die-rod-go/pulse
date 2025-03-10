@@ -24,6 +24,7 @@
     <ProjectGuid>{07024d31-8d45-4e5c-90fb-9d4db8ae91e7}</ProjectGuid>
     <RootNamespace>Evoke</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Pulse</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
