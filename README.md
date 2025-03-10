@@ -28,7 +28,7 @@ var example : event; // set to 0 by default
 
 *Reassignment*
 ```
-//  creates a var variable named example initialized to 10
+//  creates a variable named example initialized to 10
 var example = 10 : event;
 //  reassigns example to 5
 example = 5 : event;
