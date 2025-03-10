@@ -5,8 +5,9 @@
 int main(int argc, const char* argv[])
 {
 	Pulse pulse;
+	//std::cout << argc << std::endl;
 
-	if (argc == 1) {
+	if (argc > 2) {
 		std::cout << "Usage: pulse [script]\n";
 		return EXIT_FAILURE;
 	}
