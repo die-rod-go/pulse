@@ -5,14 +5,14 @@ Example:
 
 ```
 //  two statements are created and subscribe to the init event.
-byte num1 = 1 : init;
-byte num2 = 1 : init;
+var num1 = 1 : init;
+var num2 = 1 : init;
 
 //  the init event is called, creating num1 and num2
 emit init;
 
 //  a new statement is created and subscribes to the add event
-byte sum = num1 + num2 : add;
+var sum = num1 + num2 : add;
 
 //  the add event is called and the two numbers are added together
 emit add;
@@ -22,43 +22,64 @@ emit add;
 
 *Declaration*
 ```
-//  creates a byte variable named example
-byte example : event; // set to 0 by default
+//  creates a variable named example
+var example : event; // set to 0 by default
 ```
 
 *Reassignment*
 ```
-//  creates a byte variable named example initialized to 10
-byte example = 10 : event;
+//  creates a var variable named example initialized to 10
+var example = 10 : event;
 //  reassigns example to 5
 example = 5 : event;
 ```
 Note that EVERY statement must be tied to an event
 ```
 //  WRONG
-byte example; <- syntax error. expecting : and event name
+var example; <- syntax error. expecting : and event name
 ```
 
+Variables can hold bytes or strings and can be reassigned.
+```
+var byteOrString : init;
+emit init;
+
+byteOrString = "Hello World!" : set_to_string;
+print byteOrString : set_to_string;
+emit set_to_String;
+
+byteOrString = 12 : set_to_string;
+print byteOrString : set_to_string;
+emit set_to_String;
+
+output:
+Hello World!
+1
+```
+
+
 # Arrays
-Pulse supports dynamic arrays (also referred to as lists) which allow storing multiple values.
+Pulse supports dynamic lists which allow storing multiple values.
 
 *Declaration*
 ```
-// Creates an empty array
-byte[] arr : event;
+// Creates an empty list
+var[] arr : event;
 ```
 
 *Adding Elements*
 ```
-// Pushes values into the array
+// Pushes values into the list
 arr <- 3 : event;
-arr <- 4 : event;
+arr <- "test" : event;
 ```
+
+Note that lists can store heterogenous data.
 
 *Accessing and Modifying Elements*
 ```
 // Access an element
-byte x = arr[0] : event; // Gets the first element
+var x = arr[0] : event; // Gets the first element (3)
 
 // Modify an element
 arr[1] = 5 : event; // Sets the second element to 5
@@ -89,14 +110,14 @@ emit event_name ? condition;
 
 Usage:
 ```
-byte num = 10 : init;
+var num = 10 : init;
 emit init;
 
-print 1 : print_event;
+print "Greater than five!" : print_event;
 emit print_event ? num > 5;
 
 output:
-1
+Greater than five!
 ```
 
 *Looping, conditionally*
@@ -106,11 +127,11 @@ emit event_name ?? condition;
 
 Usage:
 ```
-byte num = 10 : init;
+var num = 10 : init;
 emit init;
 
 print 1 : print_event;
-emit print_event ? num > 5;
+emit print_event ?? num > 5;
 
 output:
 1
@@ -129,15 +150,15 @@ Does what it says on the tin.
 
 Usage:
 ```
-print 1 : print_event;
+print "I'm printing!" : print_event;
 emit print_event;
 
 output:
-1
+I'm printing!
 ```
 *Printing variables*
 ```
-byte x = 5 : init;
+var x = 5 : init;
 print x : init;
 emit init;
 
@@ -159,11 +180,12 @@ emit event_name ?? condition : subcribed_event;
 ```
 Take this code for a binary search for example.
 ```
-byte secretNumber = 33 : init;
-byte numGuesses = 0 : init;
-byte low = 0 : init;
-byte high = 255 : init;
-byte numGuessed : init;
+//  initialize implementation variables
+var secretNumber = 33 : init;
+var numGuesses = 0 : init;
+var low = 0 : init;
+var high = 255 : init;
+var numGuessed : init;
 emit init;
 
 numGuessed = (high + low) / 2 : guess;
@@ -188,7 +210,7 @@ emit done;
 # Initialization Order
 Event chaining can cause confusing initialization order errors. For example, look at this code.
 ```
-byte test = 10 : init;
+var test = 10 : init;
 emit init ? test == 10 : chain; // [line 2] Error: Undefined variable 'test'.
 emit chain;
 ```
