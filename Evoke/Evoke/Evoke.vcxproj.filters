@@ -82,5 +82,8 @@
     <None Include="example.pls">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="old.pls">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

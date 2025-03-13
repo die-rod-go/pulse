@@ -7,7 +7,8 @@ const std::unordered_map<std::string, TokenType> Scanner::keywords = {
 	{"var", VAR},
 	{"print", PRINT},
 	{"[]", ARRAY},
-	{"input", INPUT}
+	{"input", INPUT},
+	{"env", ENV}
 };
 
 Scanner::Scanner(std::string source) : source(source), start(0), current(0), line(1), currentOnLine(0) {}

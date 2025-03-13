@@ -14,6 +14,8 @@ private:
 	std::unordered_map<std::string, Value> values;
 	std::unordered_map<std::string, std::vector<std::unique_ptr<Stmt>>> eventMap;
 	std::unordered_map<std::string, std::vector<Value>> arrayMap;
+	static std::unordered_map<std::string, std::vector<std::unique_ptr<Stmt>>> envDefinitionMap;
+	std::unordered_map<std::string, std::shared_ptr<Environment>> envMap;
 
 public:
 	Environment() {};
@@ -32,5 +34,9 @@ public:
 	// Event handling
 	void subscribe(const std::string& eventName, std::unique_ptr<Stmt> stmt);
 	const std::vector<std::unique_ptr<Stmt>>& getSubscribedStatements(const std::string& eventName) const;
+
+	// Environment handling
+	static void createEnvDefinition(Token name, std::vector<std::unique_ptr<Stmt>> stmts);
+	std::shared_ptr<Environment> createEnvInstance(Token name);
 };
 

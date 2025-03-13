@@ -9,6 +9,7 @@ public:
 	virtual void visit(const class ByteStmt& stmt, bool evoked) const = 0;
 	virtual void visit(const class ArrayStmt& stmt, bool evoked) const = 0;
 	virtual void visit(const class EmitStmt& stmt, bool evoked) const = 0;
+	virtual void visit(const class EnvStmt& stmt, bool evoked) const = 0;
 };
 
 class Stmt {
@@ -106,5 +107,30 @@ public:
 
 	std::unique_ptr<Stmt> clone() const override {
 		return std::make_unique<EmitStmt>(eventName, op, condition ? condition->clone() : nullptr);
+	}
+};
+
+class EnvStmt : public Stmt {
+public:
+	Token name;
+	Token subscribedEvent;
+	std::vector<std::unique_ptr<Stmt>> statements;
+
+	EnvStmt(Token name, Token subscribedEvent, std::vector<std::unique_ptr<Stmt>> statements)
+		: name(name), subscribedEvent(subscribedEvent), statements(std::move(statements)) {}
+
+	void accept(const StmtVisitor& visitor, bool evoked) const override {
+		visitor.visit(*this, evoked);
+	}
+
+	std::unique_ptr<Stmt> clone() const override
+	{
+		std::vector<std::unique_ptr<Stmt>> clonedStatements;
+		for (const auto& stmt : statements)
+		{
+			clonedStatements.push_back(stmt->clone());
+		}
+
+		return std::make_unique<EnvStmt>(name, subscribedEvent, std::move(clonedStatements));
 	}
 };

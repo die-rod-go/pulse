@@ -1,28 +1,14 @@
-var example;
-//	initialize the list
-var[] list : init_list;
-list <- 0	: init_list;
-list <- 7	: init_list;
-list <- 2	: init_list;
-list <- 5	: init_list;
-list <- 11	: init_list;
-list <- 9	: init_list;
-list <- 10  : init_list;
-list <- 255	: init_list;
-var listSize = 8 : init_list;
-emit init_list;
+env Point {
+	var x : init;
+	var y : init;
+	emit init;
+} : define_point;
+emit define_point;
 
-//	initialize loop variables
-var currLargest = list[0] : init_loop_variables;
-var index = 0			   : init_loop_variables;
-emit init_loop_variables;
+Point test	: init_test;
+test.x = 10 : init_test;
+test.y = 10	: init_test;
+emit init_test;
 
-//	compare elements and find the largest
-index = index + 1 : check_next_element;
-currLargest = list[index] : found_larger;
-emit found_larger ? list[index] > currLargest : check_next_element;
-emit check_next_element ?? index + 1 < listSize;
-
-//	print the largest element
-print currLargest : print_largest;
-emit print_largest;
+print test.x + test.y : print_point;
+emit print_point;

@@ -29,6 +29,7 @@ public:
 	void visit(const ByteStmt& stmt, bool evoked) const override;
 	void visit(const ArrayStmt& stmt, bool evoked) const override;
 	void visit(const EmitStmt& stmt, bool evoked) const override;
+	void visit(const EnvStmt& stmt, bool evoked) const override {};
 
 	void emit(const EmitStmt& stmt) const;
 
