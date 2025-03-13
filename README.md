@@ -33,10 +33,10 @@ var example = 10 : event;
 //  reassigns example to 5
 example = 5 : event;
 ```
-Note that EVERY statement must be tied to an event
+EVERY statement (sans emit statements) must be subscribed to an event.
 ```
 //  WRONG
-var example; <- syntax error. expecting : and event name
+var example; <- [line 1] Error at ';': Expect ':' after variable declaration.
 ```
 
 Variables can hold bytes or strings and can be reassigned.
