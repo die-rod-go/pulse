@@ -7,13 +7,14 @@ public:
 	virtual void visit(const class UnaryExpr& expr) const = 0;
 	virtual void visit(const class BinaryExpr& expr) const = 0;
 	virtual void visit(const class GroupingExpr& expr) const = 0;
-
 	virtual void visit(const class LiteralExpr& expr) const = 0;
 	virtual void visit(const class VariableExpr& expr) const = 0;
 	virtual void visit(const class AssignmentExpr& expr) const = 0;
 	virtual void visit(const class ArrayPushExpr& expr) const = 0;
 	virtual void visit(const class ArrayAccessExpr& expr) const = 0;
 	virtual void visit(const class ArraySetExpr& expr) const = 0;
+	virtual void visit(const class InputExpr& expr) const = 0;
+
 };
 
 class Expr
@@ -179,5 +180,19 @@ public:
 
 	std::unique_ptr<Expr> clone() const override {
 		return std::make_unique<ArraySetExpr>(name, index ? index->clone() : nullptr, value ? value->clone() : nullptr);
+	}
+};
+
+class InputExpr : public Expr {
+public:
+	InputExpr() {};
+
+	void accept(const ExprVisitor& visitor) const override
+	{
+		visitor.visit(*this);
+	}
+
+	std::unique_ptr<Expr> clone() const override {
+		return std::make_unique<InputExpr>();
 	}
 };

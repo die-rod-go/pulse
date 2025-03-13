@@ -244,6 +244,9 @@ std::unique_ptr<Expr> Parser::primary()
 		return std::make_unique<VariableExpr>(previous());
 	}
 
+	if (match({ INPUT }))
+		return std::make_unique<InputExpr>();
+
 	if (match({ LEFT_PAREN }))
 	{
 		auto expr = expression();
