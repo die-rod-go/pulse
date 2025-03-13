@@ -1,5 +1,6 @@
 #include "interpreter.h"
 #include "pulse.h"
+#include <iostream>
 
 void Interpreter::interpret(std::vector<std::unique_ptr<Stmt>>& statements) const
 {
@@ -135,6 +136,13 @@ void Interpreter::visit(const ArraySetExpr& expr) const
 	environment.setArrayElement(expr.name, index, value);
 }
 
+void Interpreter::visit(const InputExpr& expr) const
+{
+	std::string input;
+	std::getline(std::cin, input);
+	currentResult = Value(input);
+}
+
 void Interpreter::visit(const GroupingExpr& expr) const
 {
 	evaluate(*expr.expr);
@@ -219,7 +227,7 @@ void Interpreter::emit(const EmitStmt& stmt) const
 	{
 		evaluate(*stmt.condition);
 		Value is_true(1);
-		bool shouldTrigger = areValuesEqual(currentResult,  is_true);
+		bool shouldTrigger = areValuesEqual(currentResult, is_true);
 		if (shouldTrigger)
 		{
 			if (stmt.op.type == QUESTION)

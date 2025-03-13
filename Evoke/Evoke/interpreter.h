@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include "expr.h"
 #include "types.h"
 #include "errors.h"
@@ -22,6 +21,7 @@ public:
 	void visit(const ArrayPushExpr& expr) const override;
 	void visit(const ArrayAccessExpr& expr) const override;
 	void visit(const ArraySetExpr& expr) const override;
+	void visit(const InputExpr& expr) const override;
 
 	//	stmts
 	void visit(const ExpressionStmt& stmt, bool evoked) const override;

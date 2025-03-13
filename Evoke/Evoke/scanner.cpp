@@ -6,7 +6,8 @@ const std::unordered_map<std::string, TokenType> Scanner::keywords = {
 	{"clear", CLEAR},
 	{"var", VAR},
 	{"print", PRINT},
-	{"[]", ARRAY}
+	{"[]", ARRAY},
+	{"input", INPUT}
 };
 
 Scanner::Scanner(std::string source) : source(source), start(0), current(0), line(1), currentOnLine(0) {}
@@ -234,9 +235,9 @@ void Scanner::handleIdentifier()
 
 // scanner.cpp
 void Scanner::handleString() {
-	while (peek() != '"' && !isAtEnd()) 
+	while (peek() != '"' && !isAtEnd())
 	{
-		if (peek() == '\n') 
+		if (peek() == '\n')
 		{
 			line++;
 			currentOnLine = 1;
@@ -244,7 +245,7 @@ void Scanner::handleString() {
 		advance();
 	}
 
-	if (isAtEnd()) 
+	if (isAtEnd())
 	{
 		Pulse::error(line, "Unterminated string");
 		return;
