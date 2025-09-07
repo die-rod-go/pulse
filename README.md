@@ -1,3 +1,8 @@
+# Warning
+Pulse is bad. Pulse is very very bad. The interpreter is inefficient. The language itself is lacking features and very confusing to use (If you mapped this along two axis I am in the worst quadrant possible. But it is my baby. An ugly baby. But my baby.
+
+Jokes aside, I wrote this as a way to dip my toe into the world programming language design and compilers. I learned a lot and my next language will hopefully be less ugly (but still a baby).  
+
 # Pulse
 Pulse is an event-driven programming language where every statement is triggered by a named event. Execution follows a strict event subscription order, and control flow is managed through event calls rather than traditional loops or function calls.
 
