@@ -1,5 +1,5 @@
 # Warning
-Pulse is bad. Pulse is very very bad. The interpreter is inefficient. The language itself is lacking features and very confusing to use (If you mapped this along two axis I am in the worst possible  quadrant). But it is my baby. An ugly baby. But my baby.
+Pulse is bad. Pulse is very very bad. The interpreter is inefficient. The language itself is lacking features and very confusing to use (If you mapped these criteria along two axis I am in the worst possible  quadrant). But it is my baby. My ugly ugly baby.
 
 Jokes aside, I wrote this as a way to dip my toe into the world of programming language design and compilers. I learned a lot and my next language will hopefully be less ugly (but still a baby).  
 
