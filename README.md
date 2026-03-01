@@ -1,7 +1,7 @@
 # Warning
 Pulse is bad. Pulse is very very bad. The interpreter is inefficient. The language is lacking features and the features themselves are annoying to use. If you mapped these criteria along two axis I am in the worst possible quadrant. But, it is my baby. My ugly ugly baby.
 
-Jokes aside, I wrote this as a way to dip my toe into the world of programming language design and compilers. I learned a lot and my next language will hopefully be less ugly (but still a baby).  
+I wrote this as a way to dip my toe into the world of programming language design and compilers. I learned a lot and my next language will hopefully be less ugly (but still a baby).  
 
 # Pulse
 Pulse is an "event driven" programming language. As opposed to food motivated, or procedural. 
