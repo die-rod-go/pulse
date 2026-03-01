@@ -1,10 +1,12 @@
 # Warning
-Pulse is bad. Pulse is very very bad. The interpreter is inefficient. The language itself is lacking features and very confusing to use (If you mapped these criteria along two axis I am in the worst possible  quadrant). But it is my baby. My ugly ugly baby.
+Pulse is bad. Pulse is very very bad. The interpreter is inefficient. The language is lacking features and the features themselves are annoying to use. If you mapped these criteria along two axis I am in the worst possible quadrant. But, it is my baby. My ugly ugly baby.
 
 Jokes aside, I wrote this as a way to dip my toe into the world of programming language design and compilers. I learned a lot and my next language will hopefully be less ugly (but still a baby).  
 
 # Pulse
-Pulse is an event-driven programming language where every statement is triggered by a named event. Execution follows a strict event subscription order, and control flow is managed through event calls rather than traditional loops or function calls.
+Pulse is an "event driven" programming language. As opposed to food motivated, or procedural. 
+
+Every statement is triggered by a named event. Execution follows a strict event subscription order, and control flow is managed my emitting events rather than traditional loops or function calls.
 
 Example:
 
@@ -13,13 +15,13 @@ Example:
 var num1 = 1 : init;
 var num2 = 1 : init;
 
-//  the init event is called, creating num1 and num2
+//  the init event is emitted, creating num1 and num2
 emit init;
 
 //  a new statement is created and subscribes to the add event
 var sum = num1 + num2 : add;
 
-//  the add event is called and the two numbers are added together
+//  the add event is emitted and the two numbers are added together
 emit add;
 ```
 
@@ -27,8 +29,8 @@ emit add;
 
 *Declaration*
 ```
-//  creates a variable named example
-var example : event; // set to 0 by default
+//  creates a variable named example (note that the statement is subscribed to the event_name event)
+var example : event_name; // set to 0 by default
 ```
 
 *Reassignment*
@@ -38,7 +40,7 @@ var example = 10 : event;
 //  reassigns example to 5
 example = 5 : event;
 ```
-EVERY statement (sans emit statements) must be subscribed to an event.
+EVERY statement (except emit statements) must be subscribed to an event.
 ```
 //  WRONG
 var example; <- [line 1] Error at ';': Expect ':' after variable declaration.
@@ -64,7 +66,7 @@ Hello World!
 
 
 # Arrays
-Pulse supports dynamic lists which allow storing multiple values.
+Pulse supports dynamic lists which allow storing multiple values..
 
 *Declaration*
 ```
@@ -79,7 +81,7 @@ arr <- 3 : event;
 arr <- "test" : event;
 ```
 
-Note that lists can store heterogenous data.
+Lists can store heterogenous data.
 
 *Accessing and Modifying Elements*
 ```
